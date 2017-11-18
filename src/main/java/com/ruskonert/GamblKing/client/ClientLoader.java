@@ -3,10 +3,12 @@ package com.ruskonert.GamblKing.client;
 import com.ruskonert.GamblKing.ProgramInitializable;
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.ClientUpdateConnection;
+import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
 import com.ruskonert.GamblKing.client.event.ClientLayoutEvent;
 import com.ruskonert.GamblKing.event.EventListener;
 import com.ruskonert.GamblKing.event.LayoutListener;
 import com.ruskonert.GamblKing.program.Register;
+
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -22,9 +24,21 @@ public class ClientLoader extends Application implements ProgramInitializable, R
     private static Stage stage;
     public static Stage getStage() { return stage; }
 
-
     private static ClientConnectionReceiver backgroundConnection;
     public static ClientConnectionReceiver getBackgroundConnection() { return backgroundConnection; }
+    public static void setBackgroundConnection(ClientConnectionReceiver backgroundConnection)
+    {
+        ClientLoader.backgroundConnection = backgroundConnection;
+    }
+
+
+    private static UpdateConnectionReceiver updateConnectionReceiver;
+    public static void setupdateConnection(UpdateConnectionReceiver updateConnection)
+    {
+        ClientLoader.updateConnectionReceiver = updateConnection;
+    }
+    public static UpdateConnectionReceiver getUpdateConnectionReceiver() { return updateConnectionReceiver; }
+
 
     public static void main(String[] args)
     {
@@ -52,11 +66,6 @@ public class ClientLoader extends Application implements ProgramInitializable, R
         {
             e.printStackTrace();
         }
-    }
-
-    public static void setBackgroundConnection(ClientConnectionReceiver backgroundConnection)
-    {
-        ClientLoader.backgroundConnection = backgroundConnection;
     }
 
     public static void updateDatabase() { ClientUpdateConnection.update(); }
@@ -93,6 +102,6 @@ public class ClientLoader extends Application implements ProgramInitializable, R
     @Override
     public void registerEvent(EventListener listener)
     {
-        //* EventController.signatureListener(listener);
+        // No needed to register the events.
     }
 }

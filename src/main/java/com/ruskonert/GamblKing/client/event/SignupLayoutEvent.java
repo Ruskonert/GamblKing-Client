@@ -24,10 +24,25 @@ public class SignupLayoutEvent implements LayoutListener
                 signupComponent.ErrorMessage.setText("오류: 아이디가 비어있습니다.");
                 return;
             }
+
+            if(signupComponent.TextID.getText().length() > 16)
+            {
+                signupComponent.ErrorMessage.setText("오류: 아이디의 최대 길이는 16입니다.");
+                return;
+            }
+
+
             if (signupComponent.TextNickname.getText().isEmpty()) {
                 signupComponent.ErrorMessage.setText("오류: 닉네임이 비어있습니다.");
                 return;
             }
+
+            if(signupComponent.TextNickname.getText().length() > 16)
+            {
+                signupComponent.ErrorMessage.setText("오류: 닉네임의 최대 길이는 16입니다.");
+                return;
+            }
+
             if (signupComponent.TextPassword.getText().isEmpty()) {
                 signupComponent.ErrorMessage.setText("오류: 비밀번호가 비어있습니다.");
                 return;

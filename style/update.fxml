@@ -20,7 +20,7 @@
             <Font name="Courier New" size="13.0" />
          </font>
       </Label>
-      <Label fx:id="UpdateLabel" layoutX="14.0" layoutY="145.0" prefHeight="17.0" prefWidth="271.0" text="Checking for update resources...">
+      <Label fx:id="UpdateLabel" layoutX="14.0" layoutY="145.0" prefHeight="17.0" prefWidth="575.0" text="Checking for update resources...">
          <font>
             <Font name="NanumGothic" size="13.0" />
          </font>

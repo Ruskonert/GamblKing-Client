@@ -14,4 +14,5 @@ public class ClientProgramManager
 
     public static SignupComponent getSignupComponent() { return signupComponent; }
     public static ClientComponent getClientComponent() { return clientComponent; }
+    public static UpdateComponent getUpdateComponent() { return updateComponent; }
 }

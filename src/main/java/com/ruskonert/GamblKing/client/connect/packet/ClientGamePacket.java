@@ -4,8 +4,12 @@ import com.ruskonert.GamblKing.property.ServerProperty;
 
 public class ClientGamePacket extends ClientPacket
 {
-    public ClientGamePacket()
+    private String id;
+    public String getId() { return this.id; }
+
+    public ClientGamePacket(String id)
     {
         super(ServerProperty.CONNECT_GAME_SERVER);
+        this.id = id;
     }
 }

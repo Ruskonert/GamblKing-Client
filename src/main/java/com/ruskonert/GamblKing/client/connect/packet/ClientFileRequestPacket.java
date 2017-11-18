@@ -1,11 +1,12 @@
 package com.ruskonert.GamblKing.client.connect.packet;
 
 import com.google.gson.Gson;
+import com.ruskonert.GamblKing.property.ServerProperty;
 import com.ruskonert.GamblKing.util.SystemUtil;
 
 import java.util.HashMap;
 
-public class ClientRequestedPacket extends ClientPacket
+public class ClientFileRequestPacket extends ClientPacket
 {
     private String data;
 
@@ -13,8 +14,8 @@ public class ClientRequestedPacket extends ClientPacket
         return new Gson().fromJson(SystemUtil.Companion.fixHashMap(data), HashMap.class);
     }
 
-    public ClientRequestedPacket(int statusNumber)
+    public ClientFileRequestPacket()
     {
-        super(statusNumber);
+        super(ServerProperty.CLIENT_FILE_REQUEST);
     }
 }

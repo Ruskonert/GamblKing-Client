@@ -41,6 +41,7 @@ public class UpdateApplication extends StageBuilder
 
             registerEvent(new UpdateLayoutEvent());
 
+            // 업데이트 서버 요청을 보냅니다.
             ClientUpdateConnection packet = new ClientUpdateConnection();
             packet.send();
 
