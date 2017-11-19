@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Reflection?>
@@ -12,7 +15,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1066.0" style="-fx-background-color: #FFFFF; -fx-padding: 10; -fx-background-image: url(&quot;wallpaper.jpg&quot;);" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1066.0" style="-fx-background-color: #FFFFF; -fx-padding: 10; -fx-background-image: url(&quot;wallpaper.jpg&quot;);" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutX="-5.0" prefHeight="700.0" prefWidth="256.0" style="-fx-background-color: #00295C;">
          <children>
@@ -69,7 +72,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <Label layoutX="14.0" layoutY="658.0" prefHeight="15.0" prefWidth="101.0" text="서버 시간 (GMT)" textFill="WHITE">
+            <Label layoutX="14.0" layoutY="658.0" prefHeight="18.0" prefWidth="139.0" text="서버 시간 (GMT)" textFill="WHITE">
                <font>
                   <Font name="NanumSquare Regular" size="14.0" />
                </font>
@@ -91,11 +94,11 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="HomePane" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;">
+      <AnchorPane fx:id="HomePane" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;" visible="false">
          <children>
-            <TextArea layoutX="27.0" layoutY="156.0" prefHeight="335.0" prefWidth="597.0" />
-            <ListView layoutX="650.0" layoutY="157.0" prefHeight="335.0" prefWidth="146.0" />
-            <TextField layoutX="27.0" layoutY="507.0" prefHeight="29.0" prefWidth="597.0" promptText="메세지를 입력하세요">
+            <TextArea fx:id="ChatBox" layoutX="27.0" layoutY="156.0" prefHeight="335.0" prefWidth="597.0" />
+            <ListView fx:id="PlayerBox" layoutX="650.0" layoutY="157.0" prefHeight="335.0" prefWidth="146.0" />
+            <TextField fx:id="MessageBox" layoutX="27.0" layoutY="507.0" prefHeight="29.0" prefWidth="597.0" promptText="메세지를 입력하세요">
                <font>
                   <Font name="NanumSquare Regular" size="17.0" />
                </font>
@@ -110,17 +113,82 @@
                   <Font name="NanumSquare Regular" size="14.0" />
                </font>
             </Label>
-            <JFXButton layoutX="650.0" layoutY="507.0" prefHeight="35.0" prefWidth="146.0" style="-fx-background-color: #1C588C;" text="메세지 보내기" textFill="WHITE">
+            <JFXButton fx:id="SendMessageButton" layoutX="650.0" layoutY="507.0" prefHeight="35.0" prefWidth="146.0" style="-fx-background-color: #1C588C;" text="메세지 보내기" textFill="WHITE">
                <font>
                   <Font name="NanumSquare Regular" size="12.0" />
                </font>
             </JFXButton>
          </children></AnchorPane>
+      <AnchorPane fx:id="SettingPage" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;" visible="false">
+         <children>
+            <JFXToggleButton fx:id="EnableBGM" layoutX="24.0" layoutY="84.0" selected="true" text="배경음악 활성화" />
+            <JFXToggleButton fx:id="EnableSoundEffect" layoutX="24.0" layoutY="144.0" selected="true" text="효과음 활성화" />
+            <Label layoutX="36.0" layoutY="36.0" text="설정">
+               <font>
+                  <Font name="System Bold" size="26.0" />
+               </font>
+            </Label>
+            <Label layoutX="36.0" layoutY="67.0" prefHeight="17.0" prefWidth="514.0" text="사용자가 원하는 대로 설정할 수 있습니다." />
+            <Label layoutX="36.0" layoutY="431.0" prefHeight="35.0" prefWidth="682.0" text="이 프로그램은 자바 프로그램 과제를 위해 제작되었습니다. 이것은 상업적인 프로그램이 아님을 다시 한번 강조합니다. 해당 프로그램의 소스 코드는 오픈 소스입니다 .오픈 소스를 참고하고 싶으시다면 아래 URL를 참고하세요." wrapText="true" />
+            <Label layoutX="36.0" layoutY="392.0" text="프로그램 정보">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Label>
+            <Label layoutX="36.0" layoutY="468.0" prefHeight="17.0" prefWidth="514.0" text="GamblKing-Client: https://github.com/ruskonert/GamblKing-Client" />
+            <Label layoutX="36.0" layoutY="485.0" prefHeight="17.0" prefWidth="514.0" text="GamblKing-Server: https://github.com/ruskonert/GamblKing-Server" />
+            <Label layoutX="36.0" layoutY="502.0" prefHeight="17.0" prefWidth="514.0" text="GamblKing-Core: https://github.com/ruskonert/GamblKing-Core" />
+            <Label layoutX="36.0" layoutY="535.0" prefHeight="17.0" prefWidth="651.0" text="이 프로그램에서 사용된 저작권은 각각 Blizzard Entertainment와 Konami Holdings Corporation에게 있습니다." />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="OnlinePage" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;">
+         <children>
+            <TableView fx:id="TableCreateRoom" layoutX="25.0" layoutY="214.0" prefHeight="352.0" prefWidth="769.0">
+              <columns>
+                <TableColumn fx:id="TableRoomNumber" prefWidth="117.0" text="방 번호" />
+                <TableColumn fx:id="TableRoomName" minWidth="0.0" prefWidth="171.00003051757812" text="방 생성일자" />
+                  <TableColumn prefWidth="238.0" text="방제 이름" />
+                  <TableColumn prefWidth="157.0" text="방장 전적" />
+                  <TableColumn prefWidth="84.0" text="방 상태" />
+              </columns>
+            </TableView>
+            <Label layoutX="25.0" layoutY="34.0" prefHeight="34.0" prefWidth="131.0" text="온라인">
+               <font>
+                  <Font size="31.0" />
+               </font>
+            </Label>
+            <Label layoutX="25.0" layoutY="72.0" prefHeight="17.0" prefWidth="305.0" text="다른 플레이어와 대결합니다." />
+            <JFXButton fx:id="RefreshRoomList" layoutX="720.0" layoutY="180.0" style="-fx-background-color: #1C588C;" text="새로 고침" textFill="WHITE" />
+            <Label fx:id="LastRefreshTime" layoutX="490.0" layoutY="181.0" prefHeight="27.0" prefWidth="228.0" text="마지막 동기화: 2017-11-22 10:58:22" />
+            <Label layoutX="25.0" layoutY="186.0" prefHeight="17.0" prefWidth="186.0" text="방 리스트">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+            <AnchorPane layoutX="309.0" layoutY="35.0" prefHeight="133.0" prefWidth="485.0" style="-fx-background-color: #1C588C; -fx-background-radius: 2em;">
+               <children>
+                  <Label layoutX="14.0" layoutY="21.0" text="방 만들기" textFill="WHITE">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="26.0" layoutY="76.0" prefHeight="22.0" prefWidth="42.0" text="제목" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="CreateRoomName" layoutX="68.0" layoutY="73.0" prefHeight="27.0" prefWidth="401.0" />
+                  <JFXButton fx:id="CreateRoomButton" layoutX="409.0" layoutY="19.0" style="-fx-background-color: ffffff; -fx-background-radius: 1em;" text="만들기" />
+                  <Label layoutX="16.0" layoutY="52.0" prefHeight="15.0" prefWidth="438.0" text="방 제목만 입력해 간단하게 방을 만들 수 있습니다. 비밀방 따위 없습니다." textFill="WHITE" wrapText="true" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
       <AnchorPane layoutX="251.0" prefHeight="133.0" prefWidth="819.0" style="-fx-background-color: #1C588C;">
          <children>
-            <AnchorPane layoutX="490.0" layoutY="26.0" prefHeight="81.0" prefWidth="305.0" style="-fx-background-color: #F2B035; -fx-background-radius: 2em; -fx-border-color: 28327F; -fx-border-radius: 2em;">
+            <AnchorPane fx:id="UserPanel" layoutX="490.0" layoutY="26.0" prefHeight="81.0" prefWidth="305.0" style="-fx-background-color: #F2B035; -fx-background-radius: 2em; -fx-border-color: 28327F; -fx-border-radius: 2em;">
                <children>
-                  <Label layoutX="70.0" layoutY="48.0" text="마지막 접속 날짜: 2017-11-17 22:44:53">
+                  <Label fx:id="LastConnected" layoutX="70.0" layoutY="48.0" text="마지막 접속 날짜: 2017-11-17 22:44:53">
                      <font>
                         <Font name="NanumSquare Regular" size="12.0" />
                      </font>
@@ -135,7 +203,7 @@
                         <Font name="NanumSquare Regular" size="12.0" />
                      </font>
                   </Label>
-                  <Label layoutX="70.0" layoutY="32.0" text="USERNAME님">
+                  <Label fx:id="Username" layoutX="70.0" layoutY="32.0" text="USERNAME님">
                      <font>
                         <Font name="NanumSquare Regular" size="12.0" />
                      </font>
@@ -150,17 +218,17 @@
                   <Font name="NanumSquare Regular" size="35.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="57.0" prefHeight="20.0" prefWidth="245.0" text="전적: 200승 1패 (99.5%)" textFill="WHITE">
+            <Label fx:id="UserScore" layoutX="14.0" layoutY="57.0" prefHeight="20.0" prefWidth="245.0" text="전적: 200승 1패 (99.5%)" textFill="WHITE">
                <font>
                   <Font name="NanumSquare Regular" size="16.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="77.0" prefHeight="20.0" prefWidth="394.0" text="마지막으로 싸운 상대: 유저닉네임" textFill="WHITE">
+            <Label fx:id="LastBattle" layoutX="14.0" layoutY="77.0" prefHeight="20.0" prefWidth="394.0" text="마지막으로 싸운 상대: 유저닉네임" textFill="WHITE">
                <font>
                   <Font name="NanumSquare Regular" size="16.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="97.0" prefHeight="20.0" prefWidth="245.0" text="접속된 IP: 172.30.1.254" textFill="WHITE">
+            <Label fx:id="ConnectedIP" layoutX="14.0" layoutY="97.0" prefHeight="20.0" prefWidth="245.0" text="접속된 IP: 172.30.1.254" textFill="WHITE">
                <font>
                   <Font name="NanumSquare Regular" size="16.0" />
                </font>

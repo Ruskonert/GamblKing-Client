@@ -177,16 +177,21 @@ public class UpdateConnectionReceiver
             // 파일이 전송된 것이라면 (업데이트 진행 중)
             else if(status == ServerProperty.CLIENT_FILE_RECEIVED)
             {
+
                 Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
                         try
                         {
-                            byte[] bFile = new Gson().fromJson(requestedJsonObject.get("data").toString().substring(1, requestedJsonObject.get("data").toString().length() -1), byte[].class);
-                            String fileDest = requestedJsonObject.get("path").getAsString();
-                            Platform.runLater(() -> ClientProgramManager.getUpdateComponent().UpdateLabel.setText("Downloading the file:" + fileDest));
-                            FileOutputStream fileOuputStream = new FileOutputStream(fileDest);
-                            fileOuputStream.write(bFile);
+                            synchronized (this)
+                            {
+                                byte[] bFile = new Gson().fromJson(requestedJsonObject.get("data").toString().substring(1, requestedJsonObject.get("data").toString().length() - 1), byte[].class);
+                                String fileDest = requestedJsonObject.get("path").getAsString();
+                                Platform.runLater(() -> ClientProgramManager.getUpdateComponent().UpdateLabel.setText("Downloading the file:" + fileDest));
+                                FileOutputStream fileOuputStream = new FileOutputStream(fileDest);
+                                fileOuputStream.write(bFile);
+
+                            }
                         }
                         catch (Exception e)
                         {
@@ -198,6 +203,16 @@ public class UpdateConnectionReceiver
                 Thread t = new Thread(task);
                 fileBackgroundTask.add(t);
                 t.start();
+                try {
+                    t.join();
+                    if(requestedJsonObject.get("finished").getAsString().equalsIgnoreCase("done"))
+                    {
+                        ClientGamePacket clientGamePacket = new ClientGamePacket(ClientConnectionReceiver.getId());
+                        clientGamePacket.send();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
