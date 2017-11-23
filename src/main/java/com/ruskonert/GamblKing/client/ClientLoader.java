@@ -1,18 +1,20 @@
 package com.ruskonert.GamblKing.client;
 
-import com.ruskonert.GamblKing.ProgramInitializable;
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
-import com.ruskonert.GamblKing.client.connect.ClientUpdateConnection;
 import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
+import com.ruskonert.GamblKing.client.connect.packet.ClientUpdatePacket;
 import com.ruskonert.GamblKing.client.event.ClientLayoutEvent;
+import com.ruskonert.GamblKing.client.program.UpdateApplication;
 import com.ruskonert.GamblKing.event.EventListener;
 import com.ruskonert.GamblKing.event.LayoutListener;
 import com.ruskonert.GamblKing.program.Register;
+import com.ruskonert.GamblKing.ProgramInitializable;
 
+import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -21,8 +23,9 @@ import javafx.stage.StageStyle;
 
 public class ClientLoader extends Application implements ProgramInitializable, Register
 {
-    private static Stage stage;
-    public static Stage getStage() { return stage; }
+    private static Thread musicThread;
+    public static Thread getMusicThread() { return musicThread; }
+    public static void setMusicThread(Thread t) { musicThread = t; }
 
     private static ClientConnectionReceiver backgroundConnection;
     public static ClientConnectionReceiver getBackgroundConnection() { return backgroundConnection; }
@@ -31,15 +34,19 @@ public class ClientLoader extends Application implements ProgramInitializable, R
         ClientLoader.backgroundConnection = backgroundConnection;
     }
 
-
     private static UpdateConnectionReceiver updateConnectionReceiver;
     public static void setupdateConnection(UpdateConnectionReceiver updateConnection)
     {
+        if(updateConnection == null)
+        {
+            Platform.runLater(() -> {
+                if (UpdateApplication.getStage() != null) {
+                    UpdateApplication.getStage().hide();
+                } });
+        }
         ClientLoader.updateConnectionReceiver = updateConnection;
     }
     public static UpdateConnectionReceiver getUpdateConnectionReceiver() { return updateConnectionReceiver; }
-
-    f
 
     public static void main(String[] args)
     {
@@ -47,20 +54,35 @@ public class ClientLoader extends Application implements ProgramInitializable, R
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    Media sound = new Media(getClass().getResource("/style/intro.mp3").toString());
+                    Media sound = new Media(SystemUtil.Companion.getStyleURL("intro.mp3").toString());
                     MediaPlayer mediaPlayer = new MediaPlayer(sound);
                     mediaPlayer.play();
                     mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                    while (true) {
+                    while (true)
+                    {
                         if (isCancelled()) {
-                            mediaPlayer.play();
+                            if (musicThread.isInterrupted()) {
+                                mediaPlayer.stop();
+                                throw new InterruptedException();
+                            }
+                            else {
+                                mediaPlayer.play();
+                            }
+                        }
+                        else
+                        {
+                            if (musicThread.isInterrupted())
+                            {
+                                mediaPlayer.stop();
+                                throw new InterruptedException();
+                            }
                         }
                     }
 
                 }
             };
-            Thread t = new Thread(task);
-            t.start();
+            musicThread = new Thread(task);
+            musicThread.start();
             launch(args);
         }
         catch(Exception e)
@@ -69,24 +91,26 @@ public class ClientLoader extends Application implements ProgramInitializable, R
         }
     }
 
-    public static void updateDatabase() { ClientUpdateConnection.update(); }
+    public static void updateDatabase() { ClientUpdatePacket.update(); }
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/style/client_login.fxml"));
-        System.out.println(getClass().getResource("/style/client_login.fxml"));
+        Platform.setImplicitExit(false);
+        FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("client_login.fxml"));
         primaryStage.setTitle("GamblKing Launcher");
-        primaryStage.setScene(new Scene((Parent) loader.load(), 1150,534));
+        primaryStage.setScene(new Scene(loader.load(), 1150,534));
         primaryStage.setResizable(true);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         this.registerEvent(new ClientLayoutEvent());
 
         stage = primaryStage;
 
-
         primaryStage.show();
     }
+
+    private static Stage stage;
+    public static Stage getStage() { return stage; }
 
     @Override
     public boolean initialize(Object handleInstance)

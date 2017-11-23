@@ -1,6 +1,6 @@
 package com.ruskonert.GamblKing.client.program;
 
-import com.ruskonert.GamblKing.client.connect.ClientUpdateConnection;
+import com.ruskonert.GamblKing.client.connect.packet.ClientUpdatePacket;
 import com.ruskonert.GamblKing.client.event.UpdateLayoutEvent;
 import com.ruskonert.GamblKing.program.StageBuilder;
 import com.ruskonert.GamblKing.util.SystemUtil;
@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class UpdateApplication extends StageBuilder
 {
@@ -28,13 +27,12 @@ public class UpdateApplication extends StageBuilder
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStylePath("/style/update.fxml"));
+            FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("update.fxml"));
             Parent parent = loader.load();
             stage.setScene(new Scene(parent, 600, 200));
             stage.setTitle("Update");
 
             stage.setResizable(false);
-            stage.initStyle(StageStyle.UNDECORATED);
 
             updateApplication = this;
             UpdateApplication.stage = stage;
@@ -42,7 +40,7 @@ public class UpdateApplication extends StageBuilder
             registerEvent(new UpdateLayoutEvent());
 
             // 업데이트 서버 요청을 보냅니다.
-            ClientUpdateConnection packet = new ClientUpdateConnection();
+            ClientUpdatePacket packet = new ClientUpdatePacket();
             packet.send();
 
             stage.show();

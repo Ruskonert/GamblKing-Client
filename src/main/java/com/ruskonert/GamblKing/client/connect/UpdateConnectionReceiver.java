@@ -6,12 +6,20 @@ import com.ruskonert.GamblKing.client.ClientLoader;
 import com.ruskonert.GamblKing.client.connect.packet.ClientFileRequestPacket;
 import com.ruskonert.GamblKing.client.connect.packet.ClientGamePacket;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
+import com.ruskonert.GamblKing.client.program.GameApplication;
+import com.ruskonert.GamblKing.client.program.UpdateApplication;
+import com.ruskonert.GamblKing.framework.PlayerEntityFramework;
 import com.ruskonert.GamblKing.property.ServerProperty;
 import com.ruskonert.GamblKing.util.SecurityUtil;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,20 +27,16 @@ import java.util.Map;
 
 public class UpdateConnectionReceiver
 {
-    private static String id;
-    public static String getId() { return id; }
+    private static Socket socket;
+    public static Socket getSocket() { return socket; }
 
-    private Socket socket;
-    public Socket getSocket() { return this.socket; }
+    private static DataInputStream in;
+    public static DataInputStream getInputStream() { return in; }
 
-    private DataInputStream in;
-    public DataInputStream getInputStream() { return this.in; }
-
-    private DataOutputStream out;
-    public DataOutputStream getOutputStream() { return this.out;}
+    private static DataOutputStream out;
+    public static DataOutputStream getOutputStream() { return out;}
 
     private static Thread taskBackground;
-
     private String receivedMessage = null;
 
     // 클라이언트 업데이트 서버를 새로 불러오거나 리로드합니다.
@@ -63,7 +67,10 @@ public class UpdateConnectionReceiver
         try
         {
             ClientLoader.setupdateConnection(this);
-            socket = new Socket(ServerProperty.SERVER_ADDRESS, ServerProperty.SERVER_UPDATE_PORT);
+            String address = ClientProgramManager.getClientComponent().CustomIP.getText().isEmpty() ? ServerProperty.SERVER_ADDRESS :
+                    ClientProgramManager.getClientComponent().CustomIP.getText();
+
+            socket = new Socket(address, ServerProperty.SERVER_UPDATE_PORT);
 
             System.out.println("업데이트 서버에 연결되었습니다. 서버 주소: " +  socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
@@ -77,6 +84,8 @@ public class UpdateConnectionReceiver
         }
     }
 
+    private boolean isLoading = false;
+
     public void readData()
     {
         while (in != null)
@@ -89,8 +98,7 @@ public class UpdateConnectionReceiver
             catch (IOException e)
             {
                 System.out.println("오류: 서버에서 연결을 끊음");
-                taskBackground.interrupt();
-                ClientLoader.setBackgroundConnection(null);
+                ClientLoader.setupdateConnection(null);
                 break;
             }
 
@@ -103,9 +111,47 @@ public class UpdateConnectionReceiver
             }
             catch (NullPointerException e)
             {
-
+                e.printStackTrace();
             }
 
+            if(status == ServerProperty.CONNECT_GAME_SERVER)
+            {
+                PlayerEntityFramework framework = new Gson().fromJson(requestedJsonObject.get("player").getAsString(), PlayerEntityFramework.class);
+                ClientConnectionReceiver.setPlayerEntityFramework(framework);
+
+                try {
+                Task<Void> t = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception
+                    {
+                        Platform.runLater(() ->
+                        {
+                            ClientLoader.getStage().close();
+                            ClientLoader.getMusicThread().interrupt();
+                        });
+                        Thread.sleep(1000L);
+                        Platform.runLater(() -> ClientProgramManager.getUpdateComponent().UpdateLabel.setText("게임에 접속합니다..."));
+                        isLoading = true;
+                        Thread.sleep(2000L);
+                        Platform.runLater(() -> UpdateApplication.getStage().close());
+                        Thread.sleep(2000L);
+                        return null;
+                    }
+                };
+                    Thread thread = new Thread(t);
+                    thread.start();
+                    thread.join();
+                    Platform.runLater(() ->
+                    {
+                        ClientGamePacket packet = new ClientGamePacket(framework.getId());
+                        packet.send();
+                        Stage stage = new Stage();
+                        new GameApplication().start(stage);
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             // 업데이트 서버에 요청했던 업데이트 요청 파일에 대한 패킷을 받습니다.
             // 업데이트 서버에 가져온 업데이트 파일들이 클라이언트에 제대로 있는지 확인합니다.
@@ -117,11 +163,21 @@ public class UpdateConnectionReceiver
                 List<String> receivedFileHashList = new ArrayList<>();
                 List<String> downloadFileList = new ArrayList<>();
 
-                // 업데이트를 해야 하는 파일이 없을 경우
+                // 업데이트를 해야 하는 파일이 하나도 없을 경우
                 if (packet.getData() == null || packet.getData().isEmpty())
                 {
-                    ClientGamePacket clientGamePacket = new ClientGamePacket(ClientConnectionReceiver.getId());
-                    clientGamePacket.send();
+                    // 업데이트 할 파일이 없으므로 즉시 게임 서버로 연결합니다.
+                    JsonObject object = new JsonObject();
+                    object.addProperty("status", ServerProperty.SEND_UPDATE_FILE_REQUEST_COMPLETED);
+                    object.addProperty("id", ClientConnectionReceiver.getId());
+                    object.addProperty("ipAddress", UpdateConnectionReceiver.getSocket().getInetAddress().getHostAddress());
+                    Platform.runLater(() -> ClientProgramManager.getUpdateComponent().UpdateLabel.setText("Preparing the client launcher..."));
+                    try {
+                        UpdateConnectionReceiver.getOutputStream().writeUTF(object.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
                 }
 
                 // 서버에서 보내준 업데이트 파일을 가져옵니다.
@@ -136,7 +192,7 @@ public class UpdateConnectionReceiver
                         // 클라이언트의 데이터 폴더를 가져옵니다.
                         File checkFile = new File("data/" + e.getValue());
 
-                        // 데이터 폴더가 있다면
+                        // 클라이언트의 데이터 폴더 내 파일을 확인합니다.
                         if (checkFile.exists()) {
                             try {
                                 String sha = SecurityUtil.Companion.extractFileHashSHA256(checkFile.getPath());
@@ -166,58 +222,27 @@ public class UpdateConnectionReceiver
 
                 }
 
-                String receiverIp = this.getSocket().getInetAddress().getHostAddress();
+                String receiverIp = getSocket().getInetAddress().getHostAddress();
                 JsonObject object = new JsonObject();
                 object.addProperty("status", ServerProperty.SEND_UPDATE_FILE_REQUEST);
                 object.addProperty("data", new Gson().toJson(receivedFileHashList.toArray(new String[receivedFileHashList.size()])));
                 object.addProperty("ipAddress", receiverIp);
-                this.send(object.toString());
-            }
-
-            // 파일이 전송된 것이라면 (업데이트 진행 중)
-            else if(status == ServerProperty.CLIENT_FILE_RECEIVED)
-            {
-
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try
-                        {
-                            synchronized (this)
-                            {
-                                byte[] bFile = new Gson().fromJson(requestedJsonObject.get("data").toString().substring(1, requestedJsonObject.get("data").toString().length() - 1), byte[].class);
-                                String fileDest = requestedJsonObject.get("path").getAsString();
-                                Platform.runLater(() -> ClientProgramManager.getUpdateComponent().UpdateLabel.setText("Downloading the file:" + fileDest));
-                                FileOutputStream fileOuputStream = new FileOutputStream(fileDest);
-                                fileOuputStream.write(bFile);
-
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                };
-                Thread t = new Thread(task);
-                fileBackgroundTask.add(t);
-                t.start();
-                try {
-                    t.join();
-                    if(requestedJsonObject.get("finished").getAsString().equalsIgnoreCase("done"))
-                    {
-                        ClientGamePacket clientGamePacket = new ClientGamePacket(ClientConnectionReceiver.getId());
-                        clientGamePacket.send();
-                    }
-                } catch (InterruptedException e) {
+                try
+                {
+                    // 클라이언트 리시버를 새로 만듭니다.
+                    // 이제 서버에서 파일 수신이 들어올 때마다 파일을 다운로드 할 것입니다.
+                    FileReceiver.start(new ServerSocket(7746));
+                }
+                catch (IOException e)
+                {
                     e.printStackTrace();
                 }
+
+                // 서버에게 원하는 업데이트 자료에 대해 수신 요청을 합니다.
+                this.send(object.toString());
             }
         }
     }
-
-    private List<Thread> fileBackgroundTask = new ArrayList<>();
 
     public void send(String message)
     {

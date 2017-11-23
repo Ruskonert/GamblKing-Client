@@ -27,7 +27,7 @@ public class SignupApplication extends StageBuilder
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/style/signup.fxml"));
+            FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("signup.fxml"));
             Parent parent = loader.load();
             stage.setScene(new Scene(parent, 480, 480));
             stage.setTitle("회원가입");

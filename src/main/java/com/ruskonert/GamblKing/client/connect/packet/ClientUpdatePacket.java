@@ -1,6 +1,5 @@
-package com.ruskonert.GamblKing.client.connect;
+package com.ruskonert.GamblKing.client.connect.packet;
 
-import com.ruskonert.GamblKing.client.connect.packet.ClientPacket;
 import com.ruskonert.GamblKing.property.ServerProperty;
 import com.ruskonert.GamblKing.util.SecurityUtil;
 
@@ -8,9 +7,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientUpdateConnection extends ClientPacket
+public class ClientUpdatePacket extends ClientPacket
 {
-    public ClientUpdateConnection()
+    public ClientUpdatePacket()
     {
         super(ServerProperty.SEND_UPDATE_REQURST);
     }
@@ -29,7 +28,7 @@ public class ClientUpdateConnection extends ClientPacket
         {
             if(file.isDirectory())
             {
-                ClientUpdateConnection.updateFiles(file);
+                ClientUpdatePacket.updateFiles(file);
             }
             else
             {

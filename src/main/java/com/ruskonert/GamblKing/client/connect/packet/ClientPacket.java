@@ -1,6 +1,6 @@
 package com.ruskonert.GamblKing.client.connect.packet;
 
-import com.ruskonert.GamblKing.client.ClientLoader;
+import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
 import com.ruskonert.GamblKing.connect.Packet;
 import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.scene.control.Alert;
@@ -15,7 +15,7 @@ public abstract class ClientPacket extends Packet
     public void send()
     {
         try {
-            super.send(ClientLoader.getBackgroundConnection().getOutputStream(), this);
+            super.send(ClientConnectionReceiver.getOutputStream(), this);
         }
         catch(NullPointerException e)
         {
@@ -27,7 +27,7 @@ public abstract class ClientPacket extends Packet
     {
         try
         {
-        packet.send(ClientLoader.getBackgroundConnection().getOutputStream(), packet);
+        packet.send(ClientConnectionReceiver.getOutputStream(), packet);
         }
         catch(NullPointerException e)
         {

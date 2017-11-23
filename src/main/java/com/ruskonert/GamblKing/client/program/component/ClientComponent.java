@@ -8,6 +8,7 @@ import com.ruskonert.GamblKing.client.program.ClientProgramManager;
 import com.ruskonert.GamblKing.util.ReflectionUtil;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
@@ -19,11 +20,10 @@ public final class ClientComponent implements Initializable
     public JFXPasswordField InputPassword;
     public JFXButton LoginButton;
     public JFXButton RegisterButton;
-    public JFXProgressBar ProgressBar;
-    public Label ProgressLabel;
     
     public ImageView StormImage;
     public JFXButton FishingButton;
+    public TextField CustomIP;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -34,9 +34,7 @@ public final class ClientComponent implements Initializable
         try
         {
             ReflectionUtil.Companion.setStaticField(ClientProgramManager.class, "clientComponent", this);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }

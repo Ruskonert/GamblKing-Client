@@ -15,24 +15,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1066.0" style="-fx-background-color: #FFFFF; -fx-padding: 10; -fx-background-image: url(&quot;wallpaper.jpg&quot;);" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1066.0" style="-fx-background-color: #FFFFFF; -fx-padding: 10; -fx-background-image: url(&quot;wallpaper.jpg&quot;);" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ruskonert.GamblKing.client.program.component.GameComponent">
    <children>
       <AnchorPane layoutX="-5.0" prefHeight="700.0" prefWidth="256.0" style="-fx-background-color: #00295C;">
          <children>
-            <AnchorPane fx:id="HomeButton" layoutY="133.0" prefHeight="52.0" prefWidth="256.0" style="-fx-background-color: #BFBCBA;">
-               <children>
-                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../Downloads/icons8-account-50%20(1).png" />
-                     </image>
-                  </ImageView>
-                  <Label layoutX="72.0" layoutY="7.0" prefHeight="39.0" prefWidth="82.0" text="HOME" textFill="WHITE">
-                     <font>
-                        <Font name="Segoe UI Light" size="27.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
+            <ImageView fitHeight="99.0" fitWidth="100.0" layoutX="9.0" opacity="0.15" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@slow_loading.gif" />
+               </image>
+            </ImageView>
             <ImageView fitHeight="213.0" fitWidth="421.0" layoutX="-165.0" layoutY="-13.0" opacity="0.1" pickOnBounds="true" preserveRatio="true" rotate="-48.9">
                <image>
                   <Image url="@Heroes_of_the_Storm_logo.png" />
@@ -46,12 +37,18 @@
             </ImageView>
             <AnchorPane fx:id="OnlineButton" layoutY="209.0" prefHeight="52.0" prefWidth="256.0" style="-fx-background-color: #95AFBF;">
                <children>
-                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../Downloads/icons8-online-50.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="72.0" layoutY="7.0" prefHeight="39.0" prefWidth="139.0" text="ONLINE" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Light" size="27.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="HomeButton" layoutY="133.0" prefHeight="52.0" prefWidth="256.0" style="-fx-background-color: #BFBCBA;">
+               <children>
+                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label layoutX="72.0" layoutY="7.0" prefHeight="39.0" prefWidth="82.0" text="HOME" textFill="WHITE">
                      <font>
                         <Font name="Segoe UI Light" size="27.0" />
                      </font>
@@ -60,11 +57,7 @@
             </AnchorPane>
             <AnchorPane fx:id="SettingsButton" layoutY="288.0" prefHeight="52.0" prefWidth="256.0" style="-fx-background-color: #95AFBF;">
                <children>
-                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../Downloads/icons8-settings-50.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="52.0" fitWidth="52.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="72.0" layoutY="7.0" prefHeight="39.0" prefWidth="139.0" text="SETTINGS" textFill="WHITE">
                      <font>
                         <Font name="Segoe UI Light" size="27.0" />
@@ -94,7 +87,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="HomePane" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;" visible="false">
+      <AnchorPane fx:id="HomePane" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;">
          <children>
             <TextArea fx:id="ChatBox" layoutX="27.0" layoutY="156.0" prefHeight="335.0" prefWidth="597.0" />
             <ListView fx:id="PlayerBox" layoutX="650.0" layoutY="157.0" prefHeight="335.0" prefWidth="146.0" />
@@ -141,7 +134,7 @@
             <Label layoutX="36.0" layoutY="535.0" prefHeight="17.0" prefWidth="651.0" text="이 프로그램에서 사용된 저작권은 각각 Blizzard Entertainment와 Konami Holdings Corporation에게 있습니다." />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="OnlinePage" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;">
+      <AnchorPane fx:id="OnlinePage" layoutX="251.0" layoutY="114.0" prefHeight="586.0" prefWidth="819.0" style="-fx-background-color: #BFBCBA;" visible="false">
          <children>
             <TableView fx:id="TableCreateRoom" layoutX="25.0" layoutY="214.0" prefHeight="352.0" prefWidth="769.0">
               <columns>
@@ -178,7 +171,7 @@
                      </font>
                   </Label>
                   <TextField fx:id="CreateRoomName" layoutX="68.0" layoutY="73.0" prefHeight="27.0" prefWidth="401.0" />
-                  <JFXButton fx:id="CreateRoomButton" layoutX="409.0" layoutY="19.0" style="-fx-background-color: ffffff; -fx-background-radius: 1em;" text="만들기" />
+                  <JFXButton fx:id="CreateRoomButton" layoutX="409.0" layoutY="19.0" style="-fx-background-color: #ffffff; -fx-background-radius: 1em;" text="만들기" />
                   <Label layoutX="16.0" layoutY="52.0" prefHeight="15.0" prefWidth="438.0" text="방 제목만 입력해 간단하게 방을 만들 수 있습니다. 비밀방 따위 없습니다." textFill="WHITE" wrapText="true" />
                </children>
             </AnchorPane>
@@ -186,18 +179,14 @@
       </AnchorPane>
       <AnchorPane layoutX="251.0" prefHeight="133.0" prefWidth="819.0" style="-fx-background-color: #1C588C;">
          <children>
-            <AnchorPane fx:id="UserPanel" layoutX="490.0" layoutY="26.0" prefHeight="81.0" prefWidth="305.0" style="-fx-background-color: #F2B035; -fx-background-radius: 2em; -fx-border-color: 28327F; -fx-border-radius: 2em;">
+            <AnchorPane fx:id="UserPanel" layoutX="490.0" layoutY="26.0" prefHeight="81.0" prefWidth="305.0" style="-fx-background-color: #F2B035; -fx-background-radius: 2em; -fx-border-color: #28327F; -fx-border-radius: 2em;">
                <children>
                   <Label fx:id="LastConnected" layoutX="70.0" layoutY="48.0" text="마지막 접속 날짜: 2017-11-17 22:44:53">
                      <font>
                         <Font name="NanumSquare Regular" size="12.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="52.0" fitWidth="100.0" layoutX="14.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../Downloads/icons8-user-account-filled-50.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fitHeight="52.0" fitWidth="100.0" layoutX="14.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="70.0" layoutY="17.0" text="환영합니다.">
                      <font>
                         <Font name="NanumSquare Regular" size="12.0" />
