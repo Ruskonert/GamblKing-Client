@@ -3,29 +3,39 @@ package com.ruskonert.GamblKing.client.connect;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-
+import com.ruskonert.GamblKing.adapter.PlayerAdapter;
 import com.ruskonert.GamblKing.adapter.RoomAdapter;
 import com.ruskonert.GamblKing.client.ClientLoader;
 import com.ruskonert.GamblKing.client.ClientManager;
-import com.ruskonert.GamblKing.client.event.GameLayoutEvent;
+import com.ruskonert.GamblKing.client.connect.packet.PlayerRefreshPacket;
+import com.ruskonert.GamblKing.client.connect.packet.RoomRefreshPacket;
+import com.ruskonert.GamblKing.client.event.RoomCreateEvent;
+import com.ruskonert.GamblKing.client.event.RoomUpdateEvent;
+import com.ruskonert.GamblKing.client.event.layout.GameLayoutEvent;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
+import com.ruskonert.GamblKing.client.program.RoomApplication;
 import com.ruskonert.GamblKing.client.program.SignupApplication;
 import com.ruskonert.GamblKing.client.program.UpdateApplication;
+import com.ruskonert.GamblKing.connect.packet.RoomConnectPacket;
+import com.ruskonert.GamblKing.entity.Player;
 import com.ruskonert.GamblKing.entity.Room;
 import com.ruskonert.GamblKing.framework.PlayerEntityFramework;
+import com.ruskonert.GamblKing.framework.RoomFramework;
 import com.ruskonert.GamblKing.property.ServerProperty;
 import com.ruskonert.GamblKing.util.SystemUtil;
-
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * ClientConnectionReceiver는 서버에 받은 패킷을 바탕으로 하여 작업을 처리하는 클래스입니다.
@@ -46,6 +56,7 @@ public class ClientConnectionReceiver
     public static DataOutputStream getOutputStream() { return out;}
 
     private static PlayerEntityFramework playerEntityFramework;
+
     public static void setPlayerEntityFramework(PlayerEntityFramework framework) { playerEntityFramework = framework; }
     public static PlayerEntityFramework getPlayerEntityFramework() { return playerEntityFramework; }
 
@@ -53,8 +64,17 @@ public class ClientConnectionReceiver
     private static Thread taskBackground;
 
     // 플레이어의 정보를 실시간으로 동기화하는 작업 쓰레드입니다.
-    // TODO 아직 구현되지 않았습니다.
     private static Thread playerSyncThread;
+    public static Thread getPlayerSync() { return playerSyncThread; }
+    Task<Void> playerThread = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+                if(playerEntityFramework == null) return null;
+                PlayerRefreshPacket packet = new PlayerRefreshPacket(playerEntityFramework);
+                packet.send();
+                return null;
+        }
+    };
 
 
     private String receivedMessage = null;
@@ -64,6 +84,7 @@ public class ClientConnectionReceiver
     {
         try
         {
+            playerSyncThread = new Thread(playerThread);
             ClientLoader.setBackgroundConnection(this);
             String address = ClientProgramManager.getClientComponent().CustomIP.getText().isEmpty() ? ServerProperty.SERVER_ADDRESS :
                     ClientProgramManager.getClientComponent().CustomIP.getText();
@@ -134,7 +155,6 @@ public class ClientConnectionReceiver
 
             JsonObject jo = new JsonObject();
             jo.addProperty("statusNumber", ServerProperty.RECEVIED_LOGIN_SUCCESS);
-            jo.addProperty("message", "Connecting update server from " + getSocket().getInetAddress().getHostAddress());
             Platform.runLater(() -> new UpdateApplication().start(new Stage()));
         }
     }
@@ -195,11 +215,114 @@ public class ClientConnectionReceiver
                 ClientManager.getConsoleSender().sendMessage(requestedJsonObject.get("message").getAsString());
             }
 
-            else if(status == ServerProperty.ROOM_REFRESH)
+            // 플레이어 정보를 서버에서 다시 동기화합니다.
+            else if(status == ServerProperty.PLAYER_REFRESH)
+            {
+                Gson gson = new GsonBuilder().registerTypeAdapter(Player.class, new PlayerAdapter()).create();
+
+                // Json Format 버그를 해결하기 위해 해당 값을 파싱해 재등록합니다.
+                String roomElement = SystemUtil.Companion.fixHashMap(requestedJsonObject.get("player").getAsJsonObject().get("enteredRoom").toString().replaceFirst("\"}\"", "\"}"));
+                requestedJsonObject.get("player").getAsJsonObject().remove("enteredRoom");
+                requestedJsonObject.get("player").getAsJsonObject().add("enteredRoom", null);
+
+                PlayerEntityFramework player = gson.fromJson(requestedJsonObject.get("player"), PlayerEntityFramework.class);
+                player.setHostAddress(socket.getInetAddress().getHostAddress());
+                player.setEnteredRoom(gson.fromJson(roomElement, RoomFramework.class));
+                ClientConnectionReceiver.setPlayerEntityFramework(player);
+            }
+
+
+            else if(status == ServerProperty.ROOM_CREATE)
             {
                 Gson gson = new GsonBuilder().registerTypeAdapter(Room.class, new RoomAdapter()).create();
-                Room[] rooms =  gson.fromJson(requestedJsonObject.get("receivedRoom"), Room[].class);
-                TableView view = ClientProgramManager.getGameComponent().TableCreateRoom;
+                RoomFramework room = gson.fromJson(requestedJsonObject.get("room"), RoomFramework.class);
+                RoomCreateEvent event = new RoomCreateEvent(room, getPlayerEntityFramework());
+                if(event.isCanceled()) continue;
+                Thread thread = new Thread(new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        Platform.runLater(() -> new RoomApplication().start(new Stage()));
+                        return null;
+                    }
+                });
+                thread.start();
+                try
+                {
+                    thread.join();
+                    event.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            else if(status == ServerProperty.ROOM_REFRESH)
+            {
+                Platform.runLater(() -> {
+                    try {
+                        Gson gson = new GsonBuilder().registerTypeAdapter(Room.class, new RoomAdapter()).create();
+                        Room[] rooms = gson.fromJson(requestedJsonObject.get("receivedRoom"), RoomFramework[].class);
+                        ObservableMap<Integer, Room> roomList = FXCollections.observableHashMap();
+                        ClientProgramManager.getGameComponent().TableCreateRoom.setItems(FXCollections.observableArrayList(roomList.values()));
+                        Platform.runLater(() -> ClientProgramManager.getGameComponent().LastRefreshTime.setText("마지막 동기화 시간: " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date())));
+                        for(int i = 0; i < rooms.length; i++)
+                        {
+                            roomList.put(i, rooms[i]);
+                        }
+                        if (roomList.size() != 0)
+                        {
+                            ClientProgramManager.getGameComponent().TableRoomNumber.setCellValueFactory
+                                    ( param -> new SimpleStringProperty(String.format("%06d",FXCollections.observableArrayList(roomList.values()).indexOf(param.getValue()))) );
+                            ClientProgramManager.getGameComponent().TableCreateRoom.setItems(FXCollections.observableArrayList(roomList.values()));
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
+            }
+
+            else if(status == ServerProperty.ROOM_CONNECTED)
+            {
+                Gson gson = new GsonBuilder().registerTypeAdapter(Player.class, new PlayerAdapter()).registerTypeAdapter(Room.class, new RoomAdapter())
+                        .create();
+
+                // Json Format 버그를 해결하기 위해 해당 값을 파싱해 재등록합니다.
+                String roomElement = SystemUtil.Companion.fixHashMap(requestedJsonObject.get("room").toString().replaceFirst("\"}\"", "\"}"));
+                requestedJsonObject.get("player").getAsJsonObject().remove("enteredRoom");
+                requestedJsonObject.get("player").getAsJsonObject().add("enteredRoom", null);
+
+                requestedJsonObject.get("leader").getAsJsonObject().remove("enteredRoom");
+                requestedJsonObject.get("leader").getAsJsonObject().add("enteredRoom", null);
+
+                PlayerEntityFramework player = gson.fromJson(requestedJsonObject.get("player"), PlayerEntityFramework.class);
+                PlayerEntityFramework leader = gson.fromJson(requestedJsonObject.get("leader"), PlayerEntityFramework.class);
+                RoomFramework room = gson.fromJson(roomElement, RoomFramework.class);
+
+                player.setEnteredRoom(room);
+                leader.setEnteredRoom(room);
+                RoomUpdateEvent event = new RoomUpdateEvent(leader, player, room);
+                if(event.isCanceled()) continue;
+                event.start();
+            }
+
+            else if(status == ServerProperty.ROOM_CLOSE)
+            {
+                if(! requestedJsonObject.get("isLeader").getAsBoolean()) {
+                    ClientProgramManager.openGameLayout();
+                    SystemUtil.Companion.alert("방 없어짐", "방장이 방을 없앰", "방이 사라졌습니다. 다른 방을 이용해주세요.");
+                    RoomRefreshPacket refreshPacket = new RoomRefreshPacket(ClientManager.getPlayer().getId());
+                    refreshPacket.send();
+                }
+                else
+                {
+                    Platform.runLater(() -> {
+                        ClientProgramManager.getRoomComponent().AnotherUserPane.setVisible(false);
+                        ClientProgramManager.getRoomComponent().StartButton.setDisable(true);
+                        ClientProgramManager.getRoomComponent().StartButton.setText("대기중...");
+                        ClientProgramManager.getRoomComponent().CapacityStatus.setText("현재 인원 (1/2)");
+                    });
+                }
             }
 
             else
@@ -207,7 +330,7 @@ public class ClientConnectionReceiver
                 // 로그인과 회원가입과 관련된 패킷을 처리합니다.
                 clientRegisterLoginSocket(status, requestedJsonObject);
             }
-
         }
+        System.out.println("Warning: ReadData() was exited.");
     }
 }

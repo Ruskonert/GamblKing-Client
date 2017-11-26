@@ -1,19 +1,15 @@
 package com.ruskonert.GamblKing.client.program;
 
-import com.ruskonert.GamblKing.client.ClientLoader;
+import com.ruskonert.GamblKing.client.ClientManager;
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
-import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
-import com.ruskonert.GamblKing.client.event.GameLayoutEvent;
+import com.ruskonert.GamblKing.client.event.layout.GameLayoutEvent;
 import com.ruskonert.GamblKing.client.framework.ConsoleFramework;
 import com.ruskonert.GamblKing.entity.Player;
 import com.ruskonert.GamblKing.program.StageBuilder;
 import com.ruskonert.GamblKing.util.SystemUtil;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -31,30 +27,14 @@ public class GameApplication extends StageBuilder
     private static  Stage stage;
     public static Stage getStage() { return stage; }
 
+
+
     @Override
     public void start(Stage stage)
     {
         try
         {
-            Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    Media sound = new Media(SystemUtil.Companion.getStyleURL("MainStage.mp3").toString());
-                    MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                    mediaPlayer.play();
-                    mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                    while (true) {
-                        if (isCancelled()) {
-                            mediaPlayer.play();
-                        }
-                    }
-
-                }
-            };
-            Thread t = new Thread(task);
-            t.start();
-
-            ClientLoader.setMusicThread(null);
+            ClientManager.setMusic("MainStage.mp3");
 
             FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("game.fxml"));
             Parent parent = null;
@@ -74,7 +54,6 @@ public class GameApplication extends StageBuilder
 
             this.registerEvent(new GameLayoutEvent());
             ConsoleFramework.initialize();
-            GameLayoutEvent.getSystemTimeThread().start();
 
             stage.show();
 
@@ -86,6 +65,8 @@ public class GameApplication extends StageBuilder
             ClientProgramManager.getGameComponent().LastBattle.setText("마지막으로 싸운 상대: " + (player.getLastBattlePlayer() == null ? "정보없음" : player.getLastBattlePlayer()));
             ClientProgramManager.getGameComponent().UserScore.setText(String.format("전적: %d승 %d패 (%3.1f%%)", player.getVictory(), player.getDefeated(),
                     (double)player.getVictory() / (player.getDefeated() + player.getVictory()) ==0 ? 1.0 : (player.getDefeated() + player.getVictory())));
+
+            GameLayoutEvent.getSystemTimeThread().start();
         }
         catch (IOException e)
         {

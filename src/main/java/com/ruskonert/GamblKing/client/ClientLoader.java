@@ -1,10 +1,15 @@
 package com.ruskonert.GamblKing.client;
 
+import com.ruskonert.GamblKing.client.Listener.RoomCreateListener;
+import com.ruskonert.GamblKing.client.Listener.RoomQuitListener;
+import com.ruskonert.GamblKing.client.Listener.RoomUpdateListener;
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.packet.ClientUpdatePacket;
-import com.ruskonert.GamblKing.client.event.ClientLayoutEvent;
+import com.ruskonert.GamblKing.client.event.layout.ClientLayoutEvent;
 import com.ruskonert.GamblKing.client.program.UpdateApplication;
+
+import com.ruskonert.GamblKing.event.EventController;
 import com.ruskonert.GamblKing.event.EventListener;
 import com.ruskonert.GamblKing.event.LayoutListener;
 import com.ruskonert.GamblKing.program.Register;
@@ -35,7 +40,7 @@ public class ClientLoader extends Application implements ProgramInitializable, R
     }
 
     private static UpdateConnectionReceiver updateConnectionReceiver;
-    public static void setupdateConnection(UpdateConnectionReceiver updateConnection)
+    public static void setUpdateConnection(UpdateConnectionReceiver updateConnection)
     {
         if(updateConnection == null)
         {
@@ -78,7 +83,6 @@ public class ClientLoader extends Application implements ProgramInitializable, R
                             }
                         }
                     }
-
                 }
             };
             musicThread = new Thread(task);
@@ -103,6 +107,9 @@ public class ClientLoader extends Application implements ProgramInitializable, R
         primaryStage.setResizable(true);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         this.registerEvent(new ClientLayoutEvent());
+        this.registerEvent(new RoomCreateListener());
+        this.registerEvent(new RoomUpdateListener());
+        this.registerEvent(new RoomQuitListener());
 
         stage = primaryStage;
 
@@ -112,21 +119,18 @@ public class ClientLoader extends Application implements ProgramInitializable, R
     private static Stage stage;
     public static Stage getStage() { return stage; }
 
-    @Override
-    public boolean initialize(Object handleInstance)
+    @Override public boolean initialize(Object handleInstance)
     {
         return true;
     }
 
-    @Override
-    public void registerEvent(LayoutListener listener)
+    @Override public void registerEvent(LayoutListener listener)
     {
         listener.register(this);
     }
 
-    @Override
-    public void registerEvent(EventListener listener)
+    @Override public void registerEvent(EventListener listener)
     {
-        // No needed to register the events.
+        EventController.signatureListener(listener);
     }
 }

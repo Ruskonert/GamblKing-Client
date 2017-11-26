@@ -1,4 +1,4 @@
-package com.ruskonert.GamblKing.client.event;
+package com.ruskonert.GamblKing.client.event.layout;
 
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.packet.ClientPacket;

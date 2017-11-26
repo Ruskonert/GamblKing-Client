@@ -1,83 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane fx:id="TopPane" prefHeight="66.0" prefWidth="600.0" style="-fx-background-color: #2d2d2d;">
-         <children>
-            <JFXButton fx:id="Readybutton" layoutX="400.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #d1730f;" text="Ready" />
-            <JFXButton fx:id="QuitButton" layoutX="498.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #d1730f;" text="Quit" />
-            <Label fx:id="RoomName" layoutX="13.0" layoutY="13.0" text="샘플링" textFill="WHITE">
-               <font>
-                  <Font size="22.0" />
-               </font>
-            </Label>
-            <Label fx:id="RoomNumber" layoutX="16.0" layoutY="41.0" text="방제목" textFill="WHITE" />
-            <JFXButton fx:id="StartButton" layoutX="303.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #d1730f;" text="Start" />
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="UserPane" layoutY="94.0" prefHeight="89.0" prefWidth="600.0" style="-fx-background-color: #f0f0f0;">
-         <children>
-            <ImageView fitHeight="66.0" fitWidth="80.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons8-사용자%20Filled-50.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="PlayerName" layoutX="103.0" layoutY="14.0" prefHeight="35.0" prefWidth="89.0" text="이름">
-               <font>
-                  <Font size="34.0" />
-               </font>
-            </Label>
-            <Label fx:id="PlayerId" layoutX="174.0" layoutY="35.0" text="아이디 샘플" />
-            <Label fx:id="PlayerStat" layoutX="114.0" layoutY="54.0" text="전적: 0승 0패 (0.0%)" />
-            <Label fx:id="PlayerStatus" alignment="CENTER" layoutX="478.0" layoutY="35.0" prefHeight="35.0" prefWidth="108.0" text="WAITING" textFill="RED">
-               <font>
-                  <Font size="23.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="AnotherUserPane" layoutY="66.0" prefHeight="28.0" prefWidth="600.0" style="-fx-background-color: #e5e5e5;">
-         <children>
-            <Label fx:id="CatacityStatus" layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="286.0" text="현재 인원 (2/2)" />
-            <Label fx:id="CreateTime" layoutX="384.0" layoutY="6.0" text="방 생성일자: 2017-11-22 11:22:33" />
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutY="183.0" prefHeight="89.0" prefWidth="600.0" style="-fx-background-color: #f0f0f0;">
-         <children>
-            <ImageView fitHeight="66.0" fitWidth="80.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons8-사용자%20Filled-50.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="AnotherPlayerName" layoutX="103.0" layoutY="14.0" prefHeight="35.0" prefWidth="89.0" text="이름">
-               <font>
-                  <Font size="34.0" />
-               </font>
-            </Label>
-            <Label fx:id="AnotherPlayerId" layoutX="174.0" layoutY="35.0" text="아이디 샘플" />
-            <Label fx:id="PlayerStat" layoutX="114.0" layoutY="54.0" text="전적: 0승 0패 (0.0%)" />
-            <Label fx:id="AnotherPlayerStatus" alignment="CENTER" layoutX="478.0" layoutY="35.0" prefHeight="35.0" prefWidth="108.0" text="READY" textFill="#26ff00">
-               <font>
-                  <Font size="23.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-      <TextArea fx:id="ChatBox" layoutX="22.0" layoutY="272.0" prefHeight="80.0" prefWidth="556.0" promptText="ChatBox">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ruskonert.GamblKing.client.program.component.RoomComponent">
+   <ImageView fitHeight="349.0" fitWidth="600.0" layoutY="63.0" opacity="0.29" pickOnBounds="true" preserveRatio="true">
+      <Image url="@wait.jpg" />
+   </ImageView>
+   <AnchorPane fx:id="TopPane" prefHeight="66.0" prefWidth="600.0" style="-fx-background-color: #2d2d2d;">
+      <JFXButton fx:id="QuitButton" layoutX="498.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #d1730f; -fx-background-radius: 1em;" text="나가기">
          <font>
-            <Font size="11.0" />
+            <Font name="NanumGothic" size="12.0" />
+         </font></JFXButton>
+      <Label fx:id="RoomName" layoutX="13.0" layoutY="13.0" prefHeight="26.0" prefWidth="370.0" text="ROOM_TITLE" textFill="WHITE">
+         <font>
+            <Font name="NanumGothic" size="21.0" />
          </font>
-      </TextArea>
-      <TextField fx:id="MessageBox" layoutX="22.0" layoutY="361.0" prefHeight="27.0" prefWidth="440.0" promptText="메세지를 입력하세요" />
-      <JFXButton fx:id="SendMessageButton" layoutX="471.0" layoutY="361.0" prefHeight="27.0" prefWidth="108.0" style="-fx-background-color: #d1730f;" text="메세지 보내기" />
-   </children>
+      </Label>
+      <Label fx:id="RoomNumber" layoutX="16.0" layoutY="41.0" text="ROOM_NUMBER" textFill="WHITE">
+         <font>
+            <Font name="NanumGothic" size="12.0" />
+         </font></Label>
+      <JFXButton fx:id="StartButton" disable="true" layoutX="407.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #d1730f; -fx-background-radius: 1em;" text="대기중">
+         <font>
+            <Font name="NanumGothic" size="12.0" />
+         </font></JFXButton>
+   </AnchorPane>
+   <AnchorPane fx:id="UserPane" layoutY="94.0" prefHeight="89.0" prefWidth="600.0">
+      <ImageView fitHeight="66.0" fitWidth="80.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+         <Image url="@user.png" />
+      </ImageView>
+      <Label fx:id="PlayerName" layoutX="103.0" layoutY="12.0" prefHeight="28.0" prefWidth="303.0" text="닉네임">
+         <font>
+            <Font name="NanumGothic" size="34.0" />
+         </font>
+      </Label>
+      <Label fx:id="PlayerId" layoutX="109.0" layoutY="49.0" text="아이디 샘플">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+      <Label fx:id="PlayerStat" layoutX="110.0" layoutY="64.0" text="전적: 0승 0패 (0.0%)">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+   </AnchorPane>
+   <AnchorPane layoutY="66.0" prefHeight="28.0" prefWidth="600.0" style="-fx-background-color: #e5e5e5;">
+      <Label fx:id="CapacityStatus" layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="286.0" text="현재 인원 (1/2)">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+      <Label fx:id="CreateTime" layoutX="384.0" layoutY="6.0" text="방 생성일자: 2017-11-22 11:22:33">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+   </AnchorPane>
+   <AnchorPane fx:id="AnotherUserPane" layoutY="183.0" prefHeight="89.0" prefWidth="600.0" visible="false">
+      <ImageView fitHeight="66.0" fitWidth="80.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+         <Image url="@user.png" />
+      </ImageView>
+      <Label fx:id="AnotherPlayerName" layoutX="103.0" layoutY="5.0" prefHeight="42.0" prefWidth="303.0" text="닉네임">
+         <font>
+            <Font name="NanumGothic" size="34.0" />
+         </font>
+      </Label>
+      <Label fx:id="AnotherPlayerId" layoutX="106.0" layoutY="47.0" text="아이디 샘플">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+      <Label fx:id="AnotherPlayerStat" layoutX="105.0" layoutY="64.0" text="전적: 0승 0패 (0.0%)">
+         <font>
+            <Font name="NanumGothic" size="13.0" />
+         </font></Label>
+   </AnchorPane>
+   <TextField fx:id="MessageBox" layoutX="22.0" layoutY="361.0" prefHeight="27.0" prefWidth="440.0" promptText="메세지를 입력하세요">
+      <font>
+         <Font name="NanumGothic" size="12.0" />
+      </font></TextField>
+   <JFXButton fx:id="SendMessageButton" layoutX="471.0" layoutY="361.0" prefHeight="27.0" prefWidth="108.0" style="-fx-background-color: #d1730f;" text="메세지 보내기">
+      <font>
+         <Font name="NanumGothic" size="12.0" />
+      </font></JFXButton>
+   <JFXTextArea fx:id="ChatBox" editable="false" layoutX="22.0" layoutY="272.0" prefHeight="75.0" prefWidth="559.0" promptText="이것은 대화 상자입니다. 상대방과 대화를 나눌 수 있습니다. 그러나, 준비 버튼 따위 없습니다. 당신은 이 방에 접속하자마자 시작될 수 있습니다. 방장 권한의 손에 달려 있습니다." wrapText="true">
+      <font>
+         <Font name="NanumGothic" size="13.0" />
+      </font></JFXTextArea>
 </AnchorPane>

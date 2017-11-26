@@ -1,6 +1,6 @@
 package com.ruskonert.GamblKing.client.program;
 
-import com.ruskonert.GamblKing.client.event.SignupLayoutEvent;
+import com.ruskonert.GamblKing.client.event.layout.SignupLayoutEvent;
 import com.ruskonert.GamblKing.program.StageBuilder;
 import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +17,7 @@ public class SignupApplication extends StageBuilder
     private static  Stage stage;
     public static Stage getStage() { return stage; }
 
-    public static void close()
+    public void close()
     {
         stage.close();
     }
@@ -27,6 +27,7 @@ public class SignupApplication extends StageBuilder
     {
         try
         {
+
             FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("signup.fxml"));
             Parent parent = loader.load();
             stage.setScene(new Scene(parent, 480, 480));

@@ -3,6 +3,7 @@ package com.ruskonert.GamblKing.client.program.component;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
+import com.ruskonert.GamblKing.entity.Room;
 import com.ruskonert.GamblKing.util.ReflectionUtil;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -32,9 +33,15 @@ public final class GameComponent implements Initializable
     public JFXToggleButton EnableSoundEffect;
     
     public AnchorPane OnlinePage;
-    public TableView TableCreateRoom;
-    public TableColumn TableRoomNumber;
-    public TableColumn TableRoomName;
+
+    public TableView<Room> TableCreateRoom;
+    public TableColumn<Room, String> TableRoomNumber;
+    public TableColumn<Room, String>  TableRoomCreate;
+    public TableColumn<Room, String>  TableRoomPlayerStat;
+    public TableColumn<Room, String>  TableRoomStatus;
+    public TableColumn<Room, String>  TableRoomName;
+
+
     public JFXButton RefreshRoomList;
     public Label LastRefreshTime;
     public TextField CreateRoomName;

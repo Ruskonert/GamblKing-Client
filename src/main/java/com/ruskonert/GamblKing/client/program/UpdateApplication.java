@@ -1,7 +1,6 @@
 package com.ruskonert.GamblKing.client.program;
 
 import com.ruskonert.GamblKing.client.connect.packet.ClientUpdatePacket;
-import com.ruskonert.GamblKing.client.event.UpdateLayoutEvent;
 import com.ruskonert.GamblKing.program.StageBuilder;
 import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +16,7 @@ public class UpdateApplication extends StageBuilder
     private static Stage stage;
     public static Stage getStage() { return stage; }
 
-    public static void close()
+    public void close()
     {
         stage.close();
     }
@@ -36,8 +35,6 @@ public class UpdateApplication extends StageBuilder
 
             updateApplication = this;
             UpdateApplication.stage = stage;
-
-            registerEvent(new UpdateLayoutEvent());
 
             // 업데이트 서버 요청을 보냅니다.
             ClientUpdatePacket packet = new ClientUpdatePacket();

@@ -14,7 +14,6 @@ import com.ruskonert.GamblKing.util.SecurityUtil;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -50,13 +49,12 @@ public class UpdateConnectionReceiver
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    background.readData();
-                    return null;
+                        background.readData();
+                        return null;
                 }
             };
 
-            Thread thread = new Thread(task);
-            taskBackground = thread;
+            taskBackground = new Thread(task);
             taskBackground.start();
         }
     }
@@ -66,7 +64,7 @@ public class UpdateConnectionReceiver
     {
         try
         {
-            ClientLoader.setupdateConnection(this);
+            ClientLoader.setUpdateConnection(this);
             String address = ClientProgramManager.getClientComponent().CustomIP.getText().isEmpty() ? ServerProperty.SERVER_ADDRESS :
                     ClientProgramManager.getClientComponent().CustomIP.getText();
 
@@ -80,12 +78,13 @@ public class UpdateConnectionReceiver
         catch(IOException e)
         {
             System.out.println("업데이트 서버 연결 실패, 메인 서버가 닫혀있습니다.");
-            ClientLoader.setupdateConnection(null);
+            ClientLoader.setUpdateConnection(null);
         }
     }
 
     private boolean isLoading = false;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void readData()
     {
         while (in != null)
@@ -98,7 +97,7 @@ public class UpdateConnectionReceiver
             catch (IOException e)
             {
                 System.out.println("오류: 서버에서 연결을 끊음");
-                ClientLoader.setupdateConnection(null);
+                ClientLoader.setUpdateConnection(null);
                 break;
             }
 

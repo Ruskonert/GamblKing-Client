@@ -1,4 +1,4 @@
-package com.ruskonert.GamblKing.client.event;
+package com.ruskonert.GamblKing.client.event.layout;
 
 import com.ruskonert.GamblKing.client.connect.ClientConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
@@ -29,13 +29,13 @@ public class ClientLayoutEvent implements LayoutListener
         {
             if(clientComponent.InputID.getText().isEmpty())
             {
-                SystemUtil.Companion.alert("경고", "아이디가 비어있움", "아이디를 입력하세요.", Alert.AlertType.WARNING);
+                SystemUtil.Companion.alert("경고", "아이디 항목이 비어있음", "게임에 접속하려면 아이디를 입력하세요.", Alert.AlertType.WARNING);
                 return;
             }
 
             if(clientComponent.InputPassword.getText().isEmpty())
             {
-                SystemUtil.Companion.alert("경고", "비밀번호가 비어있움", "비밀번호를 입력하세요.", Alert.AlertType.WARNING);
+                SystemUtil.Companion.alert("경고", "비밀번호 항목이 비어있음", "게임에 접속하려면 비밀번호를 입력하세요.", Alert.AlertType.WARNING);
                 return;
             }
 
