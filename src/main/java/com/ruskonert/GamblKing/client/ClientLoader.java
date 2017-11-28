@@ -8,7 +8,6 @@ import com.ruskonert.GamblKing.client.connect.UpdateConnectionReceiver;
 import com.ruskonert.GamblKing.client.connect.packet.ClientUpdatePacket;
 import com.ruskonert.GamblKing.client.event.layout.ClientLayoutEvent;
 import com.ruskonert.GamblKing.client.program.UpdateApplication;
-
 import com.ruskonert.GamblKing.event.EventController;
 import com.ruskonert.GamblKing.event.EventListener;
 import com.ruskonert.GamblKing.event.LayoutListener;

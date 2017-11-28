@@ -68,7 +68,6 @@ public class GameLayoutEvent implements LayoutListener
             refreshPacket.send();
         });
 
-
         component.CreateRoomButton.setOnMouseClicked(event -> {
             ClientManager.clickSound();
             String name = component.CreateRoomName.getText();
@@ -173,7 +172,6 @@ public class GameLayoutEvent implements LayoutListener
 
     public static void threadInitialize()
     {
-        GameComponent component = ClientProgramManager.getGameComponent();
         systemTimeThread = new Thread(new Task<Void>() {
             @Override
             protected Void call() throws Exception {

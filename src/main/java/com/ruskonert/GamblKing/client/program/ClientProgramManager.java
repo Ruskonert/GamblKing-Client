@@ -4,6 +4,7 @@ import com.ruskonert.GamblKing.client.ClientLoader;
 import com.ruskonert.GamblKing.client.ClientManager;
 import com.ruskonert.GamblKing.client.event.layout.GameLayoutEvent;
 import com.ruskonert.GamblKing.client.program.component.ClientComponent;
+import com.ruskonert.GamblKing.client.program.component.DuelComponent;
 import com.ruskonert.GamblKing.client.program.component.GameComponent;
 import com.ruskonert.GamblKing.client.program.component.RoomComponent;
 import com.ruskonert.GamblKing.client.program.component.SignupComponent;
@@ -22,12 +23,14 @@ public class ClientProgramManager
 
     private static RoomComponent roomComponent;
 
+    private static DuelComponent duelComponent;
+
     public static SignupComponent getSignupComponent() { return signupComponent; }
     public static ClientComponent getClientComponent() { return clientComponent; }
     public static UpdateComponent getUpdateComponent() { return updateComponent; }
     public static GameComponent getGameComponent() { return gameComponent; }
     public static RoomComponent getRoomComponent() { return roomComponent; }
-
+    public static DuelComponent getDuelComponent() { return duelComponent; }
 
     public static void openGameLayout()
     {

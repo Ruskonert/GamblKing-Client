@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ruskonert.GamblKing.client.program.component.RoomComponent">
    <ImageView fitHeight="349.0" fitWidth="600.0" layoutY="63.0" opacity="0.29" pickOnBounds="true" preserveRatio="true">
       <Image url="@wait.jpg" />
@@ -78,16 +75,4 @@
             <Font name="NanumGothic" size="13.0" />
          </font></Label>
    </AnchorPane>
-   <TextField fx:id="MessageBox" layoutX="22.0" layoutY="361.0" prefHeight="27.0" prefWidth="440.0" promptText="메세지를 입력하세요">
-      <font>
-         <Font name="NanumGothic" size="12.0" />
-      </font></TextField>
-   <JFXButton fx:id="SendMessageButton" layoutX="471.0" layoutY="361.0" prefHeight="27.0" prefWidth="108.0" style="-fx-background-color: #d1730f;" text="메세지 보내기">
-      <font>
-         <Font name="NanumGothic" size="12.0" />
-      </font></JFXButton>
-   <JFXTextArea fx:id="ChatBox" editable="false" layoutX="22.0" layoutY="272.0" prefHeight="75.0" prefWidth="559.0" promptText="이것은 대화 상자입니다. 상대방과 대화를 나눌 수 있습니다. 그러나, 준비 버튼 따위 없습니다. 당신은 이 방에 접속하자마자 시작될 수 있습니다. 방장 권한의 손에 달려 있습니다." wrapText="true">
-      <font>
-         <Font name="NanumGothic" size="13.0" />
-      </font></JFXTextArea>
 </AnchorPane>

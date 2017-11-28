@@ -42,7 +42,6 @@ public class RoomApplication extends StageBuilder
             stage.setScene(new Scene(parent, 600, 400));
             stage.setTitle("대기실");
             stage.setResizable(false);
-            stage.initStyle(StageStyle.UNDECORATED);
             RoomApplication.stage = stage;
             roomApplication = this;
             this.registerEvent(new RoomLayoutEvent());

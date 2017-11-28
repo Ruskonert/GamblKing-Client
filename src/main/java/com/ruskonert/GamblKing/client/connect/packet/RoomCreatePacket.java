@@ -1,5 +1,6 @@
 package com.ruskonert.GamblKing.client.connect.packet;
 
+import com.ruskonert.GamblKing.adapter.PlayerAdapter;
 import com.ruskonert.GamblKing.entity.Player;
 import com.ruskonert.GamblKing.property.ServerProperty;
 
@@ -20,5 +21,6 @@ public class RoomCreatePacket extends ClientPacket
         super(ServerProperty.ROOM_CREATE);
         this.name = name;
         this.player = who;
+        this.getJsonSerializers().put(Player.class, new PlayerAdapter());
     }
 }

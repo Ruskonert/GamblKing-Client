@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 public class ClientLayoutEvent implements LayoutListener
 {
-
     private static Thread stormThread;
     @Override
     public void register(Object handleInstance)

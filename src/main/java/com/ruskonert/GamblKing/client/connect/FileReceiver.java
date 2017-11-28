@@ -17,6 +17,8 @@ import java.net.Socket;
 
 public class FileReceiver
 {
+    private static Thread receiverThread;
+
     public static void start(ServerSocket serverSocket)
     {
         new FileReceiver(serverSocket);
@@ -78,18 +80,17 @@ public class FileReceiver
                         }
                     }
                 }
-
-                Thread.sleep(2000L);
                 JsonObject object = new JsonObject();
                 object.addProperty("status", ServerProperty.SEND_UPDATE_FILE_REQUEST_COMPLETED);
                 object.addProperty("id", ClientConnectionReceiver.getId());
                 object.addProperty("ipAddress", UpdateConnectionReceiver.getSocket().getInetAddress().getHostAddress());
                 UpdateConnectionReceiver.getOutputStream().writeUTF(object.toString());
+                receiverThread.interrupt();
                 return null;
             }
         };
 
-        Thread background = new Thread(backgroundTask);
-        background.start();
+        receiverThread = new Thread(backgroundTask);
+        receiverThread.start();
     }
 }
