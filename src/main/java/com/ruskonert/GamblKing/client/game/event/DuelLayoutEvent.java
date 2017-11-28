@@ -2,7 +2,6 @@ package com.ruskonert.GamblKing.client.game.event;
 
 import com.ruskonert.GamblKing.client.game.DuelPlayer;
 import com.ruskonert.GamblKing.client.game.connect.GameServerConnection;
-import com.ruskonert.GamblKing.client.game.entity.EffectElement;
 import com.ruskonert.GamblKing.client.game.entity.component.CardType;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
 import com.ruskonert.GamblKing.client.game.framework.CardFramework;
@@ -87,8 +86,15 @@ public class DuelLayoutEvent implements LayoutListener
         view.setOnMouseEntered(event -> {
             //
             if(player == null) return;
-            CardFramework framework = player.getCard().get(selectedIndex);
-
+            CardFramework framework = null;
+            try {
+                framework = player.getSelectedCard(selectedIndex);
+            }
+            catch(IndexOutOfBoundsException e)
+            {
+                e.printStackTrace();
+                return;
+            }
             //실시간으로 현재 선택된 인덱스의 번호를 저장합니다.
             player.setSelectedIndex(selectedIndex);
 

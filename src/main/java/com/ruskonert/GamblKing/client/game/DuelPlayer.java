@@ -119,6 +119,8 @@ public class DuelPlayer implements Serializable
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard7);
     }
 
+
+
     public void goToDead(CardFramework framework)
     {
         // card image change on field
@@ -553,7 +555,8 @@ public class DuelPlayer implements Serializable
 
     public CardFramework getSelectedCard(int selectedIndex)
     {
-        if(selectedIndex < 0 || selectedIndex < 40) try
+        if(selectedIndex < 0 || selectedIndex > 40)
+            try
         {
             throw new IllegalAccessException("out of range number (0-40)");
         } catch (IllegalAccessException e) {
