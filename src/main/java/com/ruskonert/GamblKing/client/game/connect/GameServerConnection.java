@@ -145,6 +145,8 @@ public class GameServerConnection
 
                     try {
                         Thread.sleep(3000L);
+                        new DuelLayoutEvent().register(DuelApplication.getDuelApplication());
+                        sendOnlyPacket(0x100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -162,11 +164,7 @@ public class GameServerConnection
         Thread serverThread = new Thread(v);
         serverThread.start();
         try {
-            serverThread.join();
-            new DuelLayoutEvent().register(DuelApplication.getDuelApplication());
             Thread.sleep(5000L);
-            // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
-            sendOnlyPacket(0x100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -197,9 +195,8 @@ public class GameServerConnection
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                backgroundThread  = new Thread(background);
+                backgroundThread = new Thread(background);
                 backgroundThread.start();
-                backgroundThread.join();
                 return null;
             }
         };
