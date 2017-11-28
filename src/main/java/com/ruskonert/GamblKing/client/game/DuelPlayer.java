@@ -196,7 +196,7 @@ public class DuelPlayer implements Serializable
         if(!isFirst)
         {
             // 카드 뽑기 전에 상대에게 승인 요청을 보냅니다.
-            DrawEvent event = new DrawEvent(card);
+            DrawEvent event = new DrawEvent(f);
 
             // 확인 신호를 받을 때까지 기다립니다.
             // Waiting for other's signal...
