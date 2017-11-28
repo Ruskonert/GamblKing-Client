@@ -93,7 +93,6 @@ public class DuelLayoutEvent implements LayoutListener
             catch(IndexOutOfBoundsException e)
             {
                 e.printStackTrace();
-                return;
             }
             //실시간으로 현재 선택된 인덱스의 번호를 저장합니다.
             player.setSelectedIndex(selectedIndex);

@@ -477,19 +477,19 @@ public class DuelPlayer implements Serializable
                     if(card.get(i) == null && view.getImage() != null)
                     {
                         // this.cardImage.get(i).getImage()에 없어지는 이펙트 애니메이션 작동
-                        Platform.runLater(() -> view.setImage(null));
+                        Platform.runLater(() -> {view.setImage(null); view.setVisible(false);});
+                        // 나만 바꾸나? 상대방도 바꿔야 함.
                         try {
                             Thread.sleep(100L);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        view.setVisible(false);
                     }
                     else
                     {
                         CardFramework framework = card.get(i);
-                        Platform.runLater(() -> view.setImage(framework.getImage()));
-                        view.setVisible(true);
+                        Platform.runLater(() -> { view.setImage(framework.getImage()); view.setVisible(true);} );
+                        // 나만 바꾸나? 상대방도 바꿔야 함.
                         try {
                             Thread.sleep(30L);
                         } catch (InterruptedException e) {

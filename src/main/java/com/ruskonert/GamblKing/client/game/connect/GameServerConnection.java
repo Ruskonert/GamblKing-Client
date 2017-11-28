@@ -307,7 +307,7 @@ public class GameServerConnection
                         {
                             // 상대에게 후발 주자이라고 보냅니다.
                             JsonObject object = new JsonObject();
-                            object.addProperty("isFirst", false);
+                            object.addProperty("isFirst", true);
                             object.addProperty("type", 0x101);
                             isFirst = true;
                             send(object.toString());
@@ -319,9 +319,9 @@ public class GameServerConnection
                         // 상대방이 먼저라면
                         else
                         {
-                            // 당신은 후발입니다. <메세지 출력>
+                            // 당신이 후발입니다. <메세지 출력>
                             JsonObject object = new JsonObject();
-                            object.addProperty("isFirst", true);
+                            object.addProperty("isFirst", false);
                             object.addProperty("type", 0x101);
                             isFirst = true;
                             send(object.toString());
