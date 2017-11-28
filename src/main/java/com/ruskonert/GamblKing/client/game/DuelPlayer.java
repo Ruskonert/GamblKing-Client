@@ -238,7 +238,6 @@ public class DuelPlayer implements Serializable
                                         ButtonType.OK);
                         alert.setTitle("카드 소환 불가");
                     }
-                    else
                     {
                         this.getCard().remove(framework);
                         this.refreshCardImage();

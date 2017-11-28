@@ -73,7 +73,9 @@ public class DuelLayoutEvent implements LayoutListener
         viewIndex.put(selectedIndex, view);
         DuelComponent component = ClientProgramManager.getDuelComponent();
         DuelPlayer player = GameServerConnection.getPlayer();
+
         view.setOnMouseEntered(event -> {
+            if(player.getCard().get(selectedIndex) == null) return;
             CardFramework framework = player.getCard().get(selectedIndex);
             player.setSelectedIndex(selectedIndex);
             if(framework != null) {
@@ -143,6 +145,11 @@ public class DuelLayoutEvent implements LayoutListener
                         break;
                     }
                 }
+            }
+            else if(event.getClickCount() == 1 && event.isPrimaryButtonDown())
+            {
+                DuelPlayer p = GameServerConnection.getPlayer();
+                GameServerConnection.getPlayer().acivateCard(p.getSelectedIndex());
             }
         });
         view.setOnMouseClicked(event -> player.setLastSelected(player.getselectOtherCard(player.getSelectedIndex())));
