@@ -37,8 +37,11 @@ public abstract class CardFramework
         this.description = builder.toString();
     }
 
+    private String summonSoundPath = null;
+
     // 소환되었을 때, 나오는 이펙트를 설정합니다.
-    public void setSummonSound(String path) { /* Complied code */ }
+    public void setSummonSound(String path) { this.summonSoundPath = path; }
+    public String getSummonSoundPath() { return this.summonSoundPath; }
 
     private boolean show;
     public boolean isHide() { return !this.show; }
@@ -69,7 +72,7 @@ public abstract class CardFramework
 
     // image
     // getter image
-    public void setImage(String path) { /* Complied code */  getClass().getResource("/style/" + path); }
+    public void setImage(String path) { this.image = new Image("file:data/"+path); }
 
     @Override
     public boolean equals(Object obj)

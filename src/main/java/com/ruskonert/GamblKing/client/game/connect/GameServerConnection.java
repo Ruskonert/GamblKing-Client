@@ -117,6 +117,7 @@ public class GameServerConnection
                 {
                     socket = new ServerSocket(8822);
                     Platform.runLater(() -> new LoadingApplication().start(new Stage()));
+
                     // 연결 기다립니다.
                     try {
                         readSocket = socket.accept();
@@ -128,24 +129,24 @@ public class GameServerConnection
                         SystemUtil.Companion.alert("연결 끊김", "상대방이 연결할 수 없음", "상대방과 연결할 수 없었습니다. 게임을 진행할 수 없습니다.");
                         e.printStackTrace();
                     }
-                    Thread.sleep(3000L);
+
                     Platform.runLater(() -> LoadingApplication.getStage().close());
 
                     // 연결이 수립되었습니다.
                     GameServerConnection.inputStream = new DataInputStream(readSocket.getInputStream());
                     GameServerConnection.outputStream = new DataOutputStream(readSocket.getOutputStream());
 
-                    // 플레이어를 만들어줍니다.
-                    player = new DuelPlayer(ClientManager.getPlayer().getId());
-                    new DuelApplication().start(new Stage());
+                    Platform.runLater(() -> {
+                        new DuelApplication().start(new Stage());
+                        // 플레이어를 만들어줍니다.
+                        player = new DuelPlayer(ClientManager.getPlayer().getId());
+                    });
 
                     try {
                         Thread.sleep(3000L);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
-                    sendOnlyPacket(0x100);
                 }
                 catch (IOException e)
                 {
@@ -154,6 +155,10 @@ public class GameServerConnection
 
                 backgroundThread = new Thread(background);
                 backgroundThread.start();
+                backgroundThread.join();
+
+                // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
+                sendOnlyPacket(0x100);
                 return null;
             }
         };
