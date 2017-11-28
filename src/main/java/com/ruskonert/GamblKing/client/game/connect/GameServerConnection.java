@@ -155,8 +155,8 @@ public class GameServerConnection
 
                 backgroundThread = new Thread(background);
                 backgroundThread.start();
-                backgroundThread.join();
 
+                backgroundThread.join();
                 // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
                 sendOnlyPacket(0x100);
                 return null;

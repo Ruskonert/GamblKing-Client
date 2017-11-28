@@ -22,7 +22,7 @@ public class DuelEngine
     {
         try
         {
-            for(int i = 0; i < 10; i++)
+            for(int i = 1; i < 10; i++)
             {
                     Class<?> clazz = Class.forName("com.ruskonert.GamblKing.client.game.entity.card.Monster0" + String.valueOf(i));
                     Constructor<?> c = clazz.getConstructors()[0];
