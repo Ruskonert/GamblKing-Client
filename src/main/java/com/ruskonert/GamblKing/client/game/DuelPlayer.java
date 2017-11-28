@@ -3,6 +3,7 @@ package com.ruskonert.GamblKing.client.game;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ruskonert.GamblKing.client.game.connect.GameServerConnection;
+import com.ruskonert.GamblKing.client.game.entity.EffectElement;
 import com.ruskonert.GamblKing.client.game.entity.component.CardType;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
 import com.ruskonert.GamblKing.client.game.event.DrawEvent;
@@ -342,24 +343,24 @@ public class DuelPlayer implements Serializable
                 }
                 if(targeting == Targeting.ALL)
                 {
-                    GameServerConnection.getEffects().add(b.getEffect(), GameServerConnection.getProcessTarget(),
-                            GameServerConnection.getTargetIndex());
+                    GameServerConnection.getEffects().add(new EffectElement(b.getEffect(), GameServerConnection.getProcessTarget(),
+                            GameServerConnection.getTargetIndex()));
                     GameServerConnection.getTargetIndex().clear();
 
-                    GameServerConnection.getEffects().add(b.getEffect(), GameServerConnection.getPlayer(),
-                            GameServerConnection.getTargetIndex());
+                    GameServerConnection.getEffects().add(new EffectElement(b.getEffect(), GameServerConnection.getPlayer(),
+                            GameServerConnection.getTargetIndex()));
                     GameServerConnection.getTargetIndex().clear();
                 }
                 else if(targeting == Targeting.THIS)
                 {
-                    GameServerConnection.getEffects().add(b.getEffect(), GameServerConnection.getPlayer(),
-                            GameServerConnection.getTargetIndex());
+                    GameServerConnection.getEffects().add(new EffectElement(b.getEffect(), GameServerConnection.getPlayer(),
+                            GameServerConnection.getTargetIndex()));
                     GameServerConnection.getTargetIndex().clear();
                 }
                 else
                 {
-                    GameServerConnection.getEffects().add(b.getEffect(), GameServerConnection.getProcessTarget(),
-                            GameServerConnection.getTargetIndex());
+                    GameServerConnection.getEffects().add(new EffectElement(b.getEffect(), GameServerConnection.getProcessTarget(),
+                            GameServerConnection.getTargetIndex()));
                     GameServerConnection.getTargetIndex().clear();
                 }
             }

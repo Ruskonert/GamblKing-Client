@@ -7,6 +7,7 @@ import com.ruskonert.GamblKing.client.game.DuelApplication;
 import com.ruskonert.GamblKing.client.game.DuelPlayer;
 import com.ruskonert.GamblKing.client.game.EffectBuilder;
 import com.ruskonert.GamblKing.client.game.LoadingApplication;
+import com.ruskonert.GamblKing.client.game.entity.EffectElement;
 import com.ruskonert.GamblKing.client.game.entity.component.ActivateCost;
 import com.ruskonert.GamblKing.client.game.entity.component.Effect;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
@@ -21,6 +22,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -45,9 +47,7 @@ public class GameServerConnection
     // 아래에 있는 모든 변수들은 static 상태라도 아무 관련이 없습니다.
     // 이 클래스는 클라이언트마다 별도로 사용되는 것이므로 더욱 효과적으로 사용할 수 있습니다.
     // 잦은 static 남용은 메모리 사용에 지장을 주지만, 아래 변수 모두 주기적으로 사용됩니다.
-
     private static Thread backgroundThread;
-
     private static Map<Integer, List<CardFramework>> effectTarget;
 
     // 당신이 방장이라면 ServerSocket은 null이 아닐 것입니다.
@@ -62,7 +62,7 @@ public class GameServerConnection
 
     // 플레이어 타켓입니다.
     private static DuelPlayer processTarget;
-    public static DuelPlayer getOther() { return processTarget; }
+    public static DuelPlayer getProcessTarget() { return processTarget; }
 
     // 현재 진행되고 있는 페이지입니다.
     private static Page processPage;
@@ -84,6 +84,7 @@ public class GameServerConnection
     private static DuelPlayer player;
     public static DuelPlayer getPlayer() { return player; }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     private static List<Integer> targetIndex = new ArrayList<>();
     public static List<Integer> getTargetIndex() { return targetIndex; }
 
@@ -93,13 +94,16 @@ public class GameServerConnection
     public static void setTargeted(boolean targeted) {
         GameServerConnection.target = targeted;
     }
+
     private static Targeting targetArea;
-
     public static Targeting getTargetArea() { return targetArea; }
-
     public static void setTargetArea(Targeting targetArea) {
         GameServerConnection.targetArea = targetArea;
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static List<EffectElement> effectElements = new ArrayList<>();
+    public static List<EffectElement> getEffects() { return effectElements; }
 
     // 방장일 때 이것이 먼저 호출될 것입니다.
     // 참여자에게 신호를 호출하기 전에 가장 먼저 호출됩니다.

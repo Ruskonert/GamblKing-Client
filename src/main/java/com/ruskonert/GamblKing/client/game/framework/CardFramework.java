@@ -3,11 +3,9 @@ package com.ruskonert.GamblKing.client.game.framework;
 import com.ruskonert.GamblKing.client.game.EffectBuilder;
 import com.ruskonert.GamblKing.client.game.entity.component.ActivateCost;
 import com.ruskonert.GamblKing.client.game.entity.component.CardType;
-import com.ruskonert.GamblKing.client.game.entity.component.Effect;
 import javafx.scene.image.Image;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class CardFramework
 {

@@ -19,6 +19,7 @@ import java.util.Map;
 public class DuelLayoutEvent implements LayoutListener
 {
     private static Map<Integer, ImageView> viewIndex = new HashMap<>();
+    public static Map<Integer, ImageView> getViewIndex() { return viewIndex; }
 
     @Override
     public void register(Object o)
@@ -85,6 +86,7 @@ public class DuelLayoutEvent implements LayoutListener
             }
         });
         view.setOnMouseClicked(event -> {
+            // 만약 카드 선택 이벤트가 활성화되었다면
             if(event.getClickCount() == 2 && GameServerConnection.isTargeted())
             {
                 Targeting t = GameServerConnection.getTargetArea();

@@ -1,10 +1,6 @@
 package com.ruskonert.GamblKing.client.game.framework;
 
-import com.ruskonert.GamblKing.client.game.entity.component.ActivateCost;
 import com.ruskonert.GamblKing.client.game.entity.component.CardType;
-import com.ruskonert.GamblKing.client.game.entity.component.Effect;
-
-import java.util.Map;
 
 /**
  * 카드를 뒤집어 놓고 다음 자기 페이지에서 발동이 가능한 함정 카드과 다르게 마법 카드는
