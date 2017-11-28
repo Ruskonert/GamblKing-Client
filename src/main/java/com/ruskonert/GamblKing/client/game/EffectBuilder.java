@@ -17,7 +17,6 @@ public class EffectBuilder
     public Effect getEffect() { return this.effect; }
 
     private DuelPlayer player;
-    public
 
     private int value;
     public void setValue(int value) { this.value = value; }

@@ -28,7 +28,7 @@ public class DuelApplication extends StageBuilder
     public void start(Stage stage) {
         try
         {
-            FXMLLoader loader = new FXMLLoader(new File("data/duel.fxml").toURI().toURL());
+            FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("duel.fxml"));
             Parent parent = null;
             try {
                 parent = loader.load();

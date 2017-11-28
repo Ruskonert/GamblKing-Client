@@ -15,5 +15,5 @@ public abstract class EffectEvent
     public EffectEvent(Targeting t, int value)
     {
 
-    }s
+    }
 }
