@@ -165,7 +165,7 @@ public class DuelPlayer implements Serializable
 
     }
 
-    public void cardDraw()
+    public CardFramework cardDraw()
     {
         CardFramework card = this.deck.get(this.deck.size() - 1);
 
@@ -180,6 +180,7 @@ public class DuelPlayer implements Serializable
 
         // 이미지 새로고침
         this.refreshCardImage();
+        return card;
     }
 
     public void draw(boolean isFirst)
@@ -190,8 +191,8 @@ public class DuelPlayer implements Serializable
             // 상대방이 이겼습니다.
             return;
         }
-        this.cardDraw();
-        CardFramework card = this.card.get(this.card.size() - 1);
+        CardFramework f = this.cardDraw();
+
         if(!isFirst)
         {
             // 카드 뽑기 전에 상대에게 승인 요청을 보냅니다.
