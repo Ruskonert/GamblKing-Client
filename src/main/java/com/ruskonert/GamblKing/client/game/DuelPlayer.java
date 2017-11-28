@@ -446,11 +446,13 @@ public class DuelPlayer implements Serializable
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        view.setVisible(false);
                     }
                     else
                     {
                         CardFramework framework = card.get(i);
                         Platform.runLater(() -> view.setImage(framework.getImage()));
+                        view.setVisible(true);
                         try {
                             Thread.sleep(30L);
                         } catch (InterruptedException e) {
