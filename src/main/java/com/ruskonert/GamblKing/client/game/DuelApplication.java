@@ -6,10 +6,12 @@ import com.ruskonert.GamblKing.client.game.event.DuelLayoutEvent;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
 import com.ruskonert.GamblKing.program.StageBuilder;
 import com.ruskonert.GamblKing.util.SystemUtil;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -29,9 +31,11 @@ public class DuelApplication extends StageBuilder
         try
         {
             FXMLLoader loader = new FXMLLoader(SystemUtil.Companion.getStyleURL("duel.fxml"));
-            Parent parent = null;
-            try {
+            Parent parent;
+            try
+            {
                 parent = loader.load();
+                this.registerEvent(new DuelLayoutEvent());
             }
             catch(OutOfMemoryError e)
             {
@@ -45,8 +49,9 @@ public class DuelApplication extends StageBuilder
             stage.initStyle(StageStyle.UNDECORATED);
             DuelApplication.stage = stage;
             duelApplication = this;
-            this.registerEvent(new DuelLayoutEvent());
-            ConsoleFramework.initialize();
+
+            Platform.runLater(() -> ClientProgramManager.getDuelComponent().Background.setImage(new Image("file:data/duel.gif")));
+
             stage.show();
 
             // 게임 화면을 서서히 보여줍니다.
@@ -59,7 +64,7 @@ public class DuelApplication extends StageBuilder
                     {
                         ClientProgramManager.getDuelComponent().DuelField.setOpacity(d);
                         d += 0.01D;
-                        Thread.sleep(200L);
+                        Thread.sleep(30L);
                     }
                     ClientManager.setMusic("game.mp3");
                     return null;

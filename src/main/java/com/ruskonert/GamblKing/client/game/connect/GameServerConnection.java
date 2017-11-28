@@ -168,7 +168,17 @@ public class GameServerConnection
         Task<Void> v = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                new DuelApplication().start(new Stage());
+                Task<Void> t = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        new DuelApplication().start(new Stage());
+                        return null;
+                    }
+                };
+                Thread v = new Thread(t);
+                v.start();
+                v.join();
+
                 //처음 시작할 때 이것이 null이 아닐 수 없습니다.
                 // 이것이 존재한다는 것은 방장이라는 것과 같습니다.
                 if(socket != null)

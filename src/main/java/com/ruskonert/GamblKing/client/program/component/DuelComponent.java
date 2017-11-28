@@ -96,6 +96,7 @@ public class DuelComponent implements Initializable
     public Label MyName;
 
     public AnchorPane DuelField;
+    public ImageView Background;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
