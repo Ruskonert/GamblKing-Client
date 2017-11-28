@@ -49,9 +49,7 @@ public class DuelApplication extends StageBuilder
             stage.initStyle(StageStyle.UNDECORATED);
             DuelApplication.stage = stage;
             duelApplication = this;
-
             Platform.runLater(() -> ClientProgramManager.getDuelComponent().Background.setImage(new Image("file:data/duel.gif")));
-
             stage.show();
 
             // 게임 화면을 서서히 보여줍니다.
