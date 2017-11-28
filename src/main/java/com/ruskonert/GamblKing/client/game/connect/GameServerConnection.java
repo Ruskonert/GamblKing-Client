@@ -156,7 +156,6 @@ public class GameServerConnection
 
                 backgroundThread = new Thread(background);
                 backgroundThread.start();
-                backgroundThread.join();
                 return null;
             }
         };
