@@ -11,6 +11,7 @@ import com.ruskonert.GamblKing.client.game.entity.EffectElement;
 import com.ruskonert.GamblKing.client.game.entity.component.ActivateCost;
 import com.ruskonert.GamblKing.client.game.entity.component.Effect;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
+import com.ruskonert.GamblKing.client.game.event.DuelLayoutEvent;
 import com.ruskonert.GamblKing.client.game.event.Page;
 import com.ruskonert.GamblKing.client.game.framework.CardFramework;
 import com.ruskonert.GamblKing.client.game.framework.TrapCard;
@@ -155,15 +156,21 @@ public class GameServerConnection
 
                 backgroundThread = new Thread(background);
                 backgroundThread.start();
-
                 backgroundThread.join();
-                // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
-                sendOnlyPacket(0x100);
                 return null;
             }
         };
         Thread serverThread = new Thread(v);
         serverThread.start();
+        try {
+            serverThread.join();
+            new DuelLayoutEvent().register(DuelApplication.getDuelApplication());
+            Thread.sleep(5000L);
+            // 상대에게 플레이어를 만들라고 하는 패킷을 보냅니다.
+            sendOnlyPacket(0x100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // 참여자일 때 먼저 호출될 것입니다.
@@ -193,6 +200,7 @@ public class GameServerConnection
                 }
                 backgroundThread  = new Thread(background);
                 backgroundThread.start();
+                backgroundThread.join();
                 return null;
             }
         };

@@ -35,7 +35,6 @@ public class DuelApplication extends StageBuilder
             try
             {
                 parent = loader.load();
-                this.registerEvent(new DuelLayoutEvent());
             }
             catch(OutOfMemoryError e)
             {
