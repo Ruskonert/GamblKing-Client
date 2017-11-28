@@ -92,4 +92,9 @@ public abstract class CardFramework
     {
         this.show = show;
     }
+
+    public void playSummonSound()
+    {
+
+    }
 }

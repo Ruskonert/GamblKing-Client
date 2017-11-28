@@ -97,6 +97,8 @@ public class DuelComponent implements Initializable
 
     public AnchorPane DuelField;
     public ImageView Background;
+    public Label DeckCount;
+    public Label OtherDeckCount;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -140,11 +142,16 @@ public class DuelComponent implements Initializable
 
         // 자신만 색깔이 바뀌면 안되므로 상대방도 색깔을 바꾸는 패킷을 보냅니다.
     }
-
-
+    
     // 버튼의 상태를 페이지 상황에 따라 바꿉니다.
     // 이것은 상대방도 바꿔줘야 합니다.
     public static void switchPageButton(Page processPage)
+    {
+        switchPageButton(processPage, false);
+    }
+    
+    // received가 false라면 상대에게 정보를 알려주는 것입니다.
+    public static void switchPageButton(Page processPage, boolean received)
     {
         switch(processPage)
         {
@@ -154,36 +161,45 @@ public class DuelComponent implements Initializable
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(false);
-                // packet
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
+                break;
             case DRAW:
                 ClientProgramManager.getDuelComponent().DP.setDisable(false);
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 ClientProgramManager.getDuelComponent().MP.setDisable(true);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
-                // packet
+                break;
             case MAIN:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP.setDisable(false);
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
-                // packet
                 break;
             case MAIN2:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP.setDisable(false);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(false);
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
-                // packet
+                break;
             case ATTACK:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP.setDisable(true);
                 ClientProgramManager.getDuelComponent().AP.setDisable(false);
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
-                // packet
+                break;
+        }
+
+        if(! received)
+        {
+            // 
         }
     }
 }

@@ -12,6 +12,7 @@
 <AnchorPane fx:id="DuelField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="775.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ruskonert.GamblKing.client.program.component.DuelComponent">
    <children>
       <ImageView fx:id="Background" fitHeight="775.0" fitWidth="1260.0" pickOnBounds="true" preserveRatio="true" />
+      <AnchorPane layoutX="-8.0" layoutY="691.0" prefHeight="84.0" prefWidth="1270.0" style="-fx-background-color: #5d5d5d;" />
       <JFXButton fx:id="DP" disable="true" layoutX="584.0" layoutY="342.0" prefHeight="37.0" prefWidth="86.0" style="-fx-background-color: #3f3f3f;" text="DP" textFill="WHITE" />
       <JFXButton fx:id="AP" disable="true" layoutX="793.0" layoutY="342.0" prefHeight="37.0" prefWidth="86.0" style="-fx-background-color: #3f3f3f;" text="AP" textFill="WHITE" />
       <JFXButton fx:id="MP" disable="true" layoutX="688.0" layoutY="342.0" prefHeight="37.0" prefWidth="86.0" style="-fx-background-color: #3f3f3f;" text="MP" textFill="WHITE" />
@@ -226,8 +227,8 @@
       <Label fx:id="MyMonsterStat4" alignment="CENTER" layoutX="848.0" layoutY="500.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />
       <Label fx:id="MyMonsterStat3" alignment="CENTER" layoutX="740.0" layoutY="500.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />
       <Label fx:id="MyMonsterStat2" alignment="CENTER" layoutX="635.0" layoutY="500.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />
-      <Label layoutX="1109.0" layoutY="602.0" text="40" />
-      <Label layoutX="444.0" layoutY="106.0" text="40" />
+      <Label fx:id="DeckCount" layoutX="1109.0" layoutY="602.0" text="40" />
+      <Label fx:id="OtherDeckCount" layoutX="444.0" layoutY="106.0" text="40" />
       <Label fx:id="OthersMonsterStat5" alignment="CENTER" layoutX="533.0" layoutY="211.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />
       <Label fx:id="OthersMonsterStat1" alignment="CENTER" layoutX="952.0" layoutY="211.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />
       <Label fx:id="OthersMonsterStat2" alignment="CENTER" layoutX="848.0" layoutY="211.0" prefHeight="17.0" prefWidth="86.0" text="2200/3300" visible="false" />

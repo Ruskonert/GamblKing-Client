@@ -1,16 +1,28 @@
 package com.ruskonert.GamblKing.client.game;
 
 import com.ruskonert.GamblKing.client.game.framework.CardFramework;
+import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.scene.image.Image;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class DuelEngine
 {
-    public static final Image CARD_HIDE_IMAGE = null;
+    public static Image CARD_HIDE_IMAGE = null;
+
+    static
+    {
+        try {
+            CARD_HIDE_IMAGE  = new Image(SystemUtil.Companion.getStylePath("card_back.png").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static ArrayList<CardFramework> frameworks = new ArrayList<>();
     public static ArrayList<CardFramework> randomizeDeck() {
         Collections.shuffle(frameworks);

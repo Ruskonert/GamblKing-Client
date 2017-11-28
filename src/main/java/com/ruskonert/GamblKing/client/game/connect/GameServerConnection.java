@@ -8,13 +8,11 @@ import com.ruskonert.GamblKing.client.game.DuelPlayer;
 import com.ruskonert.GamblKing.client.game.EffectBuilder;
 import com.ruskonert.GamblKing.client.game.LoadingApplication;
 import com.ruskonert.GamblKing.client.game.entity.EffectElement;
-import com.ruskonert.GamblKing.client.game.entity.component.ActivateCost;
-import com.ruskonert.GamblKing.client.game.entity.component.Effect;
+import com.ruskonert.GamblKing.client.game.entity.component.CardType;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
 import com.ruskonert.GamblKing.client.game.event.DuelLayoutEvent;
 import com.ruskonert.GamblKing.client.game.event.Page;
 import com.ruskonert.GamblKing.client.game.framework.CardFramework;
-import com.ruskonert.GamblKing.client.game.framework.TrapCard;
 import com.ruskonert.GamblKing.client.program.component.DuelComponent;
 import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.application.Platform;
@@ -23,7 +21,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,6 +63,9 @@ public class GameServerConnection
 
     // 현재 진행되고 있는 페이지입니다.
     private static Page processPage;
+    public static Page getProcessPage() {
+        return processPage;
+    }
 
     private static boolean summoned;
     public static void setSummoned(boolean summoned) {
@@ -90,8 +89,10 @@ public class GameServerConnection
     public static List<Integer> getTargetIndex() { return targetIndex; }
 
     private static boolean target;
+    // 마우스로 무언가를 선택할 때 이것이 타켓 지정 모드인지 참 거짓으로 나타냅니다.
     public static boolean isTargeted() { return target; }
-    // 마우스 선태 시 타켓팅 지정인지 결정합니다.
+
+    // 마우스로 무언가를 선택할 때 이것이 타켓 지정 모드인지 결정합니다.
     public static void setTargeted(boolean targeted) {
         GameServerConnection.target = targeted;
     }
@@ -105,6 +106,13 @@ public class GameServerConnection
 
     private static List<EffectElement> effectElements = new ArrayList<>();
     public static List<EffectElement> getEffects() { return effectElements; }
+
+    private static boolean finished = false;
+    public static void setFinished(boolean f) { finished = f; }
+
+    private static List<Integer> usable = new ArrayList<>();
+    public static List<Integer> getUsableIndex() { return usable; }
+
 
     // 방장일 때 이것이 먼저 호출될 것입니다.
     // 참여자에게 신호를 호출하기 전에 가장 먼저 호출됩니다.
@@ -200,8 +208,8 @@ public class GameServerConnection
                 return null;
             }
         };
-        Thread joinThead = new Thread(v);
-        joinThead.start();
+        Thread joinThread = new Thread(v);
+        joinThread.start();
     }
 
     // 정보를 상대방에게 전달합니다.
@@ -222,6 +230,9 @@ public class GameServerConnection
         send(object.toString());
     }
 
+    private static boolean selectionMode;
+    public static boolean isSelectionMode() { return selectionMode; }
+
     // 데이터를 주기적으로 받습니다.
     private static Task<Void> background = new Task<Void>() {
         @Override
@@ -232,11 +243,12 @@ public class GameServerConnection
                 JsonObject jsonData = new Gson().fromJson(readJsonString, JsonObject.class);
 
                 // 데이터를 받을 때, 각각의 패킷을 해석하고, 이벤트를 발생하게끔 합니다.
-                // 이 때, 데이터는 상대방의 데이터 정보가 모두 담겨 있습니다.
+                // 데이터에 상대방의 데이터 정보가 담겨 있다면 가져옵니다.
                 if(jsonData.get("other") != null) processTarget = new Gson().fromJson(jsonData.get("other").getAsString(), DuelPlayer.class);
 
                 // 이것은 상대방이 나의 카드 정보를 요청한 것입니다.
                 // 해당하는 카드를 보내면 됩니다.
+                // selectedIndex가 있는 경우는 이것을 제외하고 없습니다.
                 if(jsonData.get("selectedIndex") != null)
                 {
                     CardFramework framework = GameServerConnection.getPlayer().getSelectedCard(jsonData.get("selectedIndex").getAsInt());
@@ -244,6 +256,7 @@ public class GameServerConnection
                     new DataOutputStream(cardSocket.getOutputStream()).writeUTF(new Gson().toJson(framework));
                     continue;
                 }
+
                 switch(jsonData.get("type").getAsInt())
                 {
                     // 카드의 전체적인 이미지 및 수량을 다시 출력하라고 하는 신호입니다.
@@ -310,7 +323,7 @@ public class GameServerConnection
                             JsonObject object = new JsonObject();
                             object.addProperty("isFirst", true);
                             object.addProperty("type", 0x101);
-                            isFirst = false;
+                            isFirst = true;
                             send(object.toString());
                         }
                         break;
@@ -324,10 +337,11 @@ public class GameServerConnection
                     // 순서를 정한 후 카드 5장을 순차대로 뽑을 것입니다.
                     case 0x101:
                     {
+                        // 상대방의 선 드로우 여부를 확인합니다.
                         boolean first = jsonData.get("isFirst").getAsBoolean();
-                        isFirst = first;
+                        isFirst = true;
                         // 만약 자신이 먼저라면
-                        if(first)
+                        if(!first)
                         {
                             // 당신이 선공입니다. <메세지 출력>
                             // 상대는 아직 카드를 안 뽑은 상태입니다.
@@ -354,7 +368,6 @@ public class GameServerConnection
                     case 0x1002:
                     {
                         DuelComponent.changeTurnButtonColor(false);
-
                         JsonObject object = new JsonObject();
                         object.addProperty("type", 0x00);
                         object.addProperty("isFirst", true);
@@ -366,19 +379,17 @@ public class GameServerConnection
 
                     /////////////////////////////////////////////// 페이지 순서 /////////////////////////////////////////////////
 
-                    // 페이지는 상대가 이벤트를 확인한 후 각종 발동 이벤트를 받은 후에 허가가 난 후, 다음 페이지로 넘어가는 것입니다.
+                    // 페이지는 상대가 이벤트를 확인한 후 각종 발동 이벤트를 받은 후에 허가가 난 후, 다음 페이지로 가거나 계속 진행하는 것입니다.
                     // 이걸 유의하셔야 합니다.
 
                     // <플레이어>
-                    // 상대로부터 드로우 페이지 및 스탠바이 페이지를 시작하라고 받은 경우입니다.
+                    // 상대로부터 드로우 페이지를 시작하라고 받은 경우입니다.
                     case 0x00:
                     {
                         // 페이지 버튼을 내 턴으로 합니다.
                         DuelComponent.changeTurnButtonColor(true);
-
                         // 드로우 페이지로 변경합니다.
                         processPage = Page.DRAW;
-
                         // 스위치 상태를 변경합니다.
                         DuelComponent.switchPageButton(processPage);
 
@@ -394,24 +405,41 @@ public class GameServerConnection
 
                         Thread drawThread = new Thread(t);
                         drawThread.start();
+
+                        // 드로우 이벤트가 끝날 때가지 기다립니다.
+                        // 여기에는 상대가 중간에 사용될 수 있는 것까지도 처리합니다.
                         drawThread.join();
+
+                        // 1초 대기합니다.
+                        Thread.sleep(1000L);
+
+                        // 메인 페이지로 갑니다.
+                        processPage = Page.MAIN;
+
+                        // 스위치 상태를 변경합니다.
+                        DuelComponent.switchPageButton(processPage);
+
+                        // 이 다음부터는 버튼 리스너, 패킷을 통해 통신됩니다.
+                        // 여기서 플레이어가 카드를 세트하든, 소환하듯 결정하고 그에 따라서 흐름이 이어질 것입니다.
                         break;
                     }
 
                     // <바라 보고 있는 플레이어>
-                    // 상대의 draw()에서 0x10 패킷을 호출 받았습니다. 뽑은 card 정보가 담겨 있습니다.
-                    // 상대로부터 드로우 페이지 및 스탠바이 페이지를 시작한다고 받았을 때입니다.
+                    // 상대의 draw() 또는 페이즈가 넘어갈 때, 카드를 발동할 때, 공격 페이지를 받을 때 등
+                    // 이벤트가 발생하면 무조건 0x10 패킷을 호출 받습니다. 그 때 발동하거나 기준이 되는 card 정보가 담겨 있습니다.
+                    // 상대
                     // 즉, 상대방이 드로우를 할 때, 이것이 실행될 것입니다.
-                    // DrawEvent에서 ServerSocket:12247을 열고 승인 신호를 대기하고 있으며 0x10 패킷이
+                    // 상대에 AcceptedEvent에서 ServerSocket:12247을 열고 승인 신호를 대기하고 있으며 0x10 패킷이
                     // inputStream으로 들어온 상태입니다.
                     // 상대 드로우 페이지 중 드로우 이벤트를 받을 때, 선공이라면 자신이 발동할 카드는 전혀 없습니다.
                     // 처음이 아니라면, 조건에 맞는 함정 카드가 있을 때 정상적으로 사용할 수 있습니다.
                     case 0x10:
                     {
-                        //처음 드로우하는 건지 검사합니다.
+                        // 처음 턴하는 상황인지 검사합니다.
                         boolean isFirst = jsonData.get("isFirst").getAsBoolean();
 
                         // 처음 뽑는다면 세트된 함정카드는 당연히 없습니다.
+                        // 그냥 승인합니다.
                         if(isFirst)
                         {
                             new Socket(readSocket.getInetAddress().getHostAddress(), 12247);
@@ -423,60 +451,69 @@ public class GameServerConnection
                             Map<Integer, CardFramework> specialCardsField = player.getSpecialCardsField();
                             for(int i = 13; i <= 17; i++)
                             {
-                                if(specialCardsField.get(i) != null) checkNormalActivate(i, specialCardsField.get(i));
-                            }
-                            Task<Void> task = new Task<Void>() {
-                                @Override
-                                protected Void call() throws Exception {
-                                    useEffect();
-                                    return null;
+                                if(specialCardsField.get(i) != null)
+                                {
+                                    CardFramework f = specialCardsField.get(i);
+                                    // 함정 카드이면서 뒤집어져 있다면
+                                    if(f.isHide() && f.getCardType() == CardType.TARP)
+                                    {
+                                        // 해당 인덱스를 번호에 해당되는 카드 사용할 수 있다는 뜻입니다.
+                                        usable.add(i);
+                                    }
                                 }
-                            };
-                            Thread drawThread = new Thread(task);
-                            drawThread.start();
-                            drawThread.join();
+                            }
+
+                            //만약 발동할 수 있는 카드가 있다면
+                            if(usable.size() != 0)
+                            {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION, "발동할 수 있는 카드가 있습니다. 발동하시겠습니까?", ButtonType.OK, ButtonType.CANCEL);
+                                alert.setTitle("카드 사용 가능");
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if(result.get() == ButtonType.OK)
+                                {
+                                    // 타켓팅 모드가 활성화되었습니다. 마우스를 통해 인덱스에 있는 것 중에서 카드를 사용할 수 있습니다.
+                                    GameServerConnection.selectionMode = true;
+                                    Task<Void> t = new Task<Void>() {
+                                        @Override
+                                        protected Void call() throws Exception
+                                        {
+                                            while(!finished)
+                                            {
+                                                // 선택을 다할 때까지 계속 돌립니다.
+                                            }
+                                            return null;
+                                        }
+                                    };
+                                    Thread wait = new Thread(t);
+                                    //이 일이 끝날 때까지 기다립니다.
+                                    wait.join();
+
+                                    GameServerConnection.finished = false;
+                                    GameServerConnection.selectionMode = false;
+                                    // 이펙트 스택이 쌓였다면 이 효과를 이제 발동시키면 되는 것입니다.
+                                    if(effectStack.values().size() != 0)
+                                    {
+                                        // 효과 발동!
+                                    }
+                                    else
+                                    {
+                                        // 아무 효과가 누적되지 않았으므로 승인합니다.
+                                        new Socket(readSocket.getInetAddress().getHostAddress(), 12247);
+                                    }
+                                }
+                                else
+                                {
+                                    // 카드를 발동하지 않겠다고 취소했으므로 승인합니다.
+                                    new Socket(readSocket.getInetAddress().getHostAddress(), 12247);
+                                }
+                            }
+                            else
+                            {
+                                // 발동할 수 있는 카드가 없다면 승인합니다.
+                                new Socket(readSocket.getInetAddress().getHostAddress(), 12247);
+                            }
                         }
                         break;
-                    }
-
-                    case 0x20:
-                    {
-
-                    }
-
-                    // <플레이 하는 유저>
-                    // 페이지가 승인된 경우입니다.
-                    // 이 때, 상대방이 발동한 효과를 정리해 나에게 적용되는 것이 있는지 검증합니다.
-                    //  그 다음 메인 페이지로 넘어갑니다.
-                    case 0x00000003e:
-                    {
-
-                        // 드로우 페이지로 변경합니다.
-                        processPage = Page.MAIN;
-
-                        // 스위치 상태를 변경합니다.
-                        DuelComponent.switchPageButton(processPage);
-                        // 상대에게 승인 이벤트를 보냅니다.
-                    }
-
-
-                    // 상대로부터 배틀 페이지를 시작하라고 받은 경우입니다.
-                    case 0x02:
-                    {
-                        break;
-                    }
-
-
-                    // 상대로부터 메인 페이지 2를 시작한다고 받았을 때입니다.
-                    case 0x30:
-                    {
-
-                    }
-
-                    // 상대로부터 엔드 페이지를 한다고 받았을 때입니다.
-                    case 0x40 :
-                    {
-
                     }
                     default:
                     {
@@ -496,8 +533,9 @@ public class GameServerConnection
             @Override protected Void call() throws Exception {
                 for(int i = 0; i < 5; i++) {
                     player.cardDraw();
+                    // 상대방도 이미지 변경하는 패킷 전송
                     GameServerConnection.getPlayer().refreshCardImage();
-                    Thread.sleep(500L);
+                    Thread.sleep(1000L);
                 }
                 return null;
             }
@@ -505,9 +543,9 @@ public class GameServerConnection
 
         Thread thread = new Thread(draw);
         thread.start();
-        try {
+        try
+        {
             thread.join();
-
             // 상대방이 아직 패를 안 뽑은 경우에는
             // 상대방도 카드를 뽑아야 합니다.
             if(!finish) sendOnlyPacket(0x1001);
@@ -547,64 +585,6 @@ public class GameServerConnection
                 new Socket(readSocket.getInetAddress().getHostAddress(), 12247);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-        }
-    }
-
-
-    private static void checkNormalActivate(int index, CardFramework f)
-    {
-        // TODO 함수화 예정
-        // 함정 카드라면
-        if(f instanceof TrapCard)
-        {
-            // 형 변환합니다.
-            TrapCard f2 = (TrapCard) f;
-            // 발동 조건을 조사합니다.
-            // TODO
-            ActivateCost cost = null;
-
-            // 만약 상대방에 어떤 페이지에서도 발동할 수 있다면
-            // 이것은 다른 페이즈에서도 발동됩니다.
-            if(cost == ActivateCost.NONE)
-            {
-                // TODO
-                Set<Effect> effects = null;
-                for(Effect e : effects)
-                {
-                    List<CardFramework> frameworks = new ArrayList<>();
-                    EffectBuilder builder = new EffectBuilder(e);
-                    // 이 효과에 대한 인자값을 조사합니다.
-
-                    // TODO
-                    Object[] args = null; //f2.getEffects().;
-                    // 이제 효과에 따라 타켓팅과 카운팅을 분석합니다.
-
-                    if(args[0] instanceof Targeting)
-                    {
-                        builder.setTargeting((Targeting) args[0]);
-                        if(builder.getTargeting() == Targeting.THIS)
-                        {
-                            // 자신의 진영에서 카드를 선택하세요.
-                        }
-                        else if(builder.getTargeting() == Targeting.OTHER)
-                        {
-                            // 상대 필드 위에 카드를 선택하세요.
-                        }
-                        else
-                        {
-                            // 전체 필드에서 카드를 선택하세요.
-                        }
-                    }
-                    else if(args[0] instanceof Integer)
-                    {
-                        builder.setCount((Integer) args[0]);
-                    }
-                    // 효과 스택을 채웁니다.
-                    // 그 카드 자리의 인덱스와 같이 넣습니다.
-                    effectStack.put(index, builder);
-                    effectTarget.put(index, frameworks);
-                }
             }
         }
     }
