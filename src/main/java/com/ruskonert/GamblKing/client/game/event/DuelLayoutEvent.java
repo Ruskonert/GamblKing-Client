@@ -89,7 +89,12 @@ public class DuelLayoutEvent implements LayoutListener
         });
         view.setOnMouseClicked(event -> {
             // 만약 카드 선택 이벤트가 활성화되었다면
-            if(event.getClickCount() == 2 && GameServerConnection.isTargeted())
+            if(event.getClickCount() == 1)
+            {
+                DuelPlayer p = GameServerConnection.getPlayer();
+                GameServerConnection.getPlayer().acivateCard(p.getSelectedIndex());
+            }
+            else if(event.getClickCount() == 2 && GameServerConnection.isTargeted())
             {
                 Targeting t = GameServerConnection.getTargetArea();
                 switch(t)
@@ -145,11 +150,6 @@ public class DuelLayoutEvent implements LayoutListener
                         break;
                     }
                 }
-            }
-            else if(event.getClickCount() == 1 && event.isPrimaryButtonDown())
-            {
-                DuelPlayer p = GameServerConnection.getPlayer();
-                GameServerConnection.getPlayer().acivateCard(p.getSelectedIndex());
             }
         });
         view.setOnMouseClicked(event -> player.setLastSelected(player.getselectOtherCard(player.getSelectedIndex())));

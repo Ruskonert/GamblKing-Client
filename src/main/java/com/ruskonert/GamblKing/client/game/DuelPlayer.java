@@ -94,7 +94,7 @@ public class DuelPlayer implements Serializable
         this.monsterCardsFieldImage = new ArrayList<>();
         this.usableIndex = new ArrayList<>();
 
-        ClientProgramManager.getDuelComponent().MyName.setText(id);
+        Platform.runLater(() ->ClientProgramManager.getDuelComponent().MyName.setText(id));
 
         // 카드 위치를 지정해줍니다.
         // 순서대로 대입됩니다.
