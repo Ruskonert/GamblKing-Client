@@ -448,7 +448,7 @@ public class DuelPlayer implements Serializable
                         {
                             // 세트된 카드가 발동된 이펙트 애니메이션 작동
                         }
-                        Platform.runLater(() -> view.setImage(framework.isHide() ? DuelEngine.CARD_HIDE_IMAGE : framework.getImage()));
+                        Platform.runLater(() -> {view.setImage(framework.isHide() ? DuelEngine.CARD_HIDE_IMAGE : framework.getImage()); view.setVisible(true);});
                         try {
                             Thread.sleep(30L);
                         } catch (InterruptedException e) {
