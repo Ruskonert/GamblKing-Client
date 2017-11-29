@@ -2,7 +2,9 @@ package com.ruskonert.GamblKing.client.game;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.ruskonert.GamblKing.client.game.connect.DeckRefreshEvent;
 import com.ruskonert.GamblKing.client.game.connect.GameServerConnection;
+import com.ruskonert.GamblKing.client.game.connect.PlayerChangeCardEvent;
 import com.ruskonert.GamblKing.client.game.entity.EffectElement;
 import com.ruskonert.GamblKing.client.game.entity.component.CardType;
 import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
@@ -22,6 +24,7 @@ import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,23 +35,35 @@ public class DuelPlayer implements Serializable
     private int life;
     public int getLife() { return this.life; }
 
+    // 덱 카드 정보
     private ArrayList<CardFramework> deck;
     public ArrayList<CardFramework> getDeck() { return deck; }
+
+    // 덱 카드 이미지
     private transient ImageView deckImage;
     public ImageView getDeckImage() { return deckImage; }
 
+    // 패 카드 정보
     private ArrayList<CardFramework> card;
     public ArrayList<CardFramework> getCard() { return card; }
+
+    // 패 카드 이미지
     private transient ArrayList<ImageView> cardImage;
     public ArrayList<ImageView> getCardImage() { return cardImage; }
 
+    // 스폐셜 필드 존 카드 정보
     private Map<Integer, CardFramework> specialCardsField;
     public Map<Integer, CardFramework> getSpecialCardsField() { return specialCardsField; }
+
+    // 스폐셜 필드 존 카드 이미지
     private transient ArrayList<ImageView> specialCardsFieldImage;
     public ArrayList<ImageView> getSpecialCardsFieldImage() { return specialCardsFieldImage; }
 
+    // 몬스터 카드 존 카드 정보
     private Map<Integer, MonsterCard> monsterCardsField;
-    public Map<Integer, MonsterCard>  getMonsterCardsField() { return monsterCardsField; }
+    public Map<Integer, MonsterCard> getMonsterCardsField() { return monsterCardsField; }
+
+    // 몬스터 카드 존 카드 이미지
     private transient ArrayList<ImageView> monsterCardsFieldImage;
     public ArrayList<ImageView> getMonsterCardsFieldImage() { return monsterCardsFieldImage; }
 
@@ -74,6 +89,27 @@ public class DuelPlayer implements Serializable
     private List<Integer> usableIndex;
     public List<Integer> getUsableIndex() { return usableIndex; }
 
+
+    // 다른 사람의 그림과 카드 데이터입니다.
+    // 0x10000 패킷을 통해 얻어 올 수 있습니다.
+    private transient ArrayList<ImageView> otherSpecialCards;
+    public ArrayList<ImageView> getOtherSpecialCards() { return otherSpecialCards;}
+
+    private transient ArrayList<ImageView> otherSpecialCardsField;
+    public ArrayList<ImageView> getOtherSpecialCardsField()  { return otherSpecialCardsField; }
+
+    private transient ArrayList<ImageView> otherMonsterCards;
+    public ArrayList<ImageView> getOtherMonsterCards() { return otherMonsterCards; }
+
+    private transient ArrayList<ImageView> otherMonsterCardsField;
+    public ArrayList<ImageView> getOtherMonsterCardsField() { return otherMonsterCardsField; }
+
+    private transient ArrayList<CardFramework> otherCards;
+    public ArrayList<CardFramework> getOtherCards() { return otherCards; }
+    private transient ArrayList<ImageView> otherCardImage;
+    public ArrayList<ImageView> getOtherCardImage() { return otherCardImage; }
+
+
     /**
      * id를 가지는 플레이어를 생성하고 기본값을 초기화합니다
      * @param id
@@ -92,9 +128,15 @@ public class DuelPlayer implements Serializable
 
         this.specialCardsFieldImage = new ArrayList<>();
         this.monsterCardsFieldImage = new ArrayList<>();
+
+        this.otherCardImage = new ArrayList<>();
+        this.otherMonsterCards = new ArrayList<>();
+        this.otherSpecialCards = new ArrayList<>();
+
         this.usableIndex = new ArrayList<>();
 
-        Platform.runLater(() ->ClientProgramManager.getDuelComponent().MyName.setText(id));
+
+        Platform.runLater(() -> ClientProgramManager.getDuelComponent().MyName.setText(id));
 
         // 카드 위치를 지정해줍니다.
         // 순서대로 대입됩니다.
@@ -103,13 +145,11 @@ public class DuelPlayer implements Serializable
         monsterCardsFieldImage.add(ClientProgramManager.getDuelComponent().MonsterField3);
         monsterCardsFieldImage.add(ClientProgramManager.getDuelComponent().MonsterField4);
         monsterCardsFieldImage.add(ClientProgramManager.getDuelComponent().MonsterField5);
-
         specialCardsFieldImage.add(ClientProgramManager.getDuelComponent().SpecialField1);
         specialCardsFieldImage.add(ClientProgramManager.getDuelComponent().SpecialField2);
         specialCardsFieldImage.add(ClientProgramManager.getDuelComponent().SpecialField3);
         specialCardsFieldImage.add(ClientProgramManager.getDuelComponent().SpecialField4);
         specialCardsFieldImage.add(ClientProgramManager.getDuelComponent().SpecialField5);
-
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard1);
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard2);
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard3);
@@ -117,6 +157,22 @@ public class DuelPlayer implements Serializable
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard5);
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard6);
         cardImage.add(ClientProgramManager.getDuelComponent().MyCard7);
+
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersSpecialField1);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersSpecialField2);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersSpecialField3);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersSpecialField4);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersSpecialField5);
+        otherCardImage.add(ClientProgramManager.getDuelComponent().OthersCard1);
+        otherCardImage.add(ClientProgramManager.getDuelComponent().OthersCard2);
+        otherCardImage.add(ClientProgramManager.getDuelComponent().OthersCard3);
+        otherCardImage.add(ClientProgramManager.getDuelComponent().OthersCard4);
+        otherCardImage.add(ClientProgramManager.getDuelComponent().OthersCard5);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersMonsterField1);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersMonsterField2);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersMonsterField3);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersMonsterField4);
+        otherSpecialCards.add(ClientProgramManager.getDuelComponent().OthersMonsterField5);
     }
 
 
@@ -478,7 +534,11 @@ public class DuelPlayer implements Serializable
                     {
                         // this.cardImage.get(i).getImage()에 없어지는 이펙트 애니메이션 작동
                         Platform.runLater(() -> {view.setImage(null); view.setVisible(false);});
+
                         // 나만 바꾸나? 상대방도 바꿔야 함.
+                        PlayerChangeCardEvent packet = new PlayerChangeCardEvent(GameServerConnection.getPlayer());
+                        packet.send();
+
                         try {
                             Thread.sleep(100L);
                         } catch (InterruptedException e) {
@@ -506,7 +566,8 @@ public class DuelPlayer implements Serializable
 
     public void refreshDeckImage()
     {
-
+        DeckRefreshEvent event = new DeckRefreshEvent(GameServerConnection.getPlayer().getDeck().size());
+        event.send();
     }
 
 

@@ -1,6 +1,7 @@
 package com.ruskonert.GamblKing.client.program.component;
 
 import com.jfoenix.controls.JFXButton;
+import com.ruskonert.GamblKing.client.game.connect.PlayerPageEvent;
 import com.ruskonert.GamblKing.client.game.event.Page;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
 import com.ruskonert.GamblKing.util.ReflectionUtil;
@@ -132,11 +133,11 @@ public class DuelComponent implements Initializable
             // 내 차례라는 색깔로 바꿉니다.
             Platform.runLater(() ->
             {
-                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: white");
-                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: white");
-                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: white");
-                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: white");
-                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: skyblue");
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: skyblue");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: skyblue");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: skyblue");
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: skyblue");
             });
         }
 
@@ -160,46 +161,67 @@ public class DuelComponent implements Initializable
                 ClientProgramManager.getDuelComponent().MP.setDisable(true);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
-                ClientProgramManager.getDuelComponent().EP.setDisable(false);
+                ClientProgramManager.getDuelComponent().EP.setDisable(received);
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: white");
                 ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 break;
             case DRAW:
-                ClientProgramManager.getDuelComponent().DP.setDisable(false);
-                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().DP.setDisable(received);
                 ClientProgramManager.getDuelComponent().MP.setDisable(true);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: white");
                 break;
             case MAIN:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
-                ClientProgramManager.getDuelComponent().MP.setDisable(false);
-                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().MP.setDisable(received);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: white");
                 break;
             case MAIN2:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
-                ClientProgramManager.getDuelComponent().MP.setDisable(false);
+                ClientProgramManager.getDuelComponent().MP.setDisable(received);
                 ClientProgramManager.getDuelComponent().AP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(false);
-                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: white");
                 break;
             case ATTACK:
                 ClientProgramManager.getDuelComponent().DP.setDisable(true);
                 ClientProgramManager.getDuelComponent().MP.setDisable(true);
-                ClientProgramManager.getDuelComponent().AP.setDisable(false);
-                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().AP.setDisable(received);
                 ClientProgramManager.getDuelComponent().MP2.setDisable(true);
                 ClientProgramManager.getDuelComponent().EP.setDisable(true);
+                ClientProgramManager.getDuelComponent().DP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().MP.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().AP.setStyle("-fx-background-color: yellow");
+                ClientProgramManager.getDuelComponent().MP2.setStyle("-fx-background-color: white");
+                ClientProgramManager.getDuelComponent().EP.setStyle("-fx-background-color: white");
                 break;
         }
 
         if(! received)
         {
-            // 
+            PlayerPageEvent event = new PlayerPageEvent(processPage);
+            event.send();
         }
     }
 }

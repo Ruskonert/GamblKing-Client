@@ -2,12 +2,10 @@ package com.ruskonert.GamblKing.client.program.component;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import com.ruskonert.GamblKing.client.program.ClientProgramManager;
 import com.ruskonert.GamblKing.util.ReflectionUtil;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 

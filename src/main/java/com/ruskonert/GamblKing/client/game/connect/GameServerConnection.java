@@ -13,6 +13,7 @@ import com.ruskonert.GamblKing.client.game.entity.component.Targeting;
 import com.ruskonert.GamblKing.client.game.event.DuelLayoutEvent;
 import com.ruskonert.GamblKing.client.game.event.Page;
 import com.ruskonert.GamblKing.client.game.framework.CardFramework;
+import com.ruskonert.GamblKing.client.program.ClientProgramManager;
 import com.ruskonert.GamblKing.client.program.component.DuelComponent;
 import com.ruskonert.GamblKing.util.SystemUtil;
 import javafx.application.Platform;
@@ -28,6 +29,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -244,7 +246,7 @@ public class GameServerConnection
 
                 // 데이터를 받을 때, 각각의 패킷을 해석하고, 이벤트를 발생하게끔 합니다.
                 // 데이터에 상대방의 데이터 정보가 담겨 있다면 가져옵니다.
-                if(jsonData.get("other") != null) processTarget = new Gson().fromJson(jsonData.get("other").getAsString(), DuelPlayer.class);
+                if(jsonData.get("player") != null) processTarget = new Gson().fromJson(jsonData.get("player").getAsString(), DuelPlayer.class);
 
                 // 이것은 상대방이 나의 카드 정보를 요청한 것입니다.
                 // 해당하는 카드를 보내면 됩니다.
@@ -263,9 +265,26 @@ public class GameServerConnection
                     // 이것은 카드의 발동, 카드의 파괴같은 이벤트가 발생할 때마다 실시간으로 신호를 받습니다.
                     // 이것은 필드에 카드가 변화하는 것이므로 이미지 또한 바뀌어야 합니다.
                     // 굉장히 무거운 작업이므로 성능 저하에 유의합니다.
+
+                    // 상대의 덱의 갯수를 변경합니다.
+                    case 0x10002:
+                    {
+                        int count = jsonData.get("count").getAsInt();
+                        Platform.runLater(() -> ClientProgramManager.getDuelComponent().OtherDeckCount.setText(String.valueOf(count)));
+                    }
+
+                    // 상대방으로부터 모든 카드 위치를 읽어옵니다.
+                    // 패의 위치, 세트한 카드 이미지, 몬스터등 아주 무거운 작업입니다.
                     case 0x10000:
                     {
-                        // sync
+                        player.getOtherCards().addAll(processTarget.getCard());
+                    }
+
+                    case 0x10020:
+                    {
+                        DuelComponent.changeTurnButtonColor(false);
+                        Page now = new Gson().fromJson(jsonData.get("page"), Page.class);
+                        DuelComponent.switchPageButton(now, true);
                         break;
                     }
 
@@ -289,6 +308,7 @@ public class GameServerConnection
                     // 이제 당신만 카드를 뽑으면 될 것입니다.
                     case 0x1001:
                     {
+                        
                         initDraw(true);
                         break;
                     }

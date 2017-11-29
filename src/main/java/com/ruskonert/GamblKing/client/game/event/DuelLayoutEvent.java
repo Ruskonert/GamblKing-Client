@@ -165,7 +165,6 @@ public class DuelLayoutEvent implements LayoutListener
                 }
             }
 
-
             // 이것은 타겟팅 인덱스입니다. 즉 마법 카드나 함정 카드를 발동할 때 그 대상을 선택하는 것을 말합니다.
             // 이 녀석은 2번 눌러야 합니다.
             else if(event.getClickCount() == 2 && GameServerConnection.isTargeted())
