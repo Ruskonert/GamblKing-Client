@@ -227,9 +227,11 @@ public class GameServerConnection
     // 상태 정보만 전달합니다.
     private static void sendOnlyPacket(int status)
     {
-        JsonObject object = new JsonObject();
-        object.addProperty("type", status);
-        send(object.toString());
+        synchronized (GameServerConnection.class) {
+            JsonObject object = new JsonObject();
+            object.addProperty("type", status);
+            send(object.toString());
+        }
     }
 
     private static boolean selectionMode;
@@ -308,7 +310,7 @@ public class GameServerConnection
                     // 이제 당신만 카드를 뽑으면 될 것입니다.
                     case 0x1001:
                     {
-                        
+
                         initDraw(true);
                         break;
                     }
